@@ -1,0 +1,78 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# IDE / Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Local notes
+todo
+*.local
+
+# Logs / Diagnostics
+*.log
+*.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Dependency Artifacts
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+.pnp
+.pnp.js
+
+# Environment Files
+.env
+.env.*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+global.d.ts
+vinxi-env.d.ts
+vite-env.d.ts
+expo-env.d.ts
+nativewind-env.d.ts
+
+# Build / Output
+dist/
+build/
+out/
+dist-ssr/
+web-build/
+.next/
+.expo/
+drizzle/
+.output
+.vercel
+.netlify
+.wrangler
+.tanstack
+.turbo
+coverage
+
+# Framework / Tool caches
+.cache
+.vinxi
+routeTree.gen.ts
+
+# Platform / OS
+.DS_Store
+
+# Security / Keys
+*.pem
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro (React Native)
+.metro-health-check*

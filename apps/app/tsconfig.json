@@ -1,0 +1,11 @@
+{
+  "extends": "@esk/typescript-config/tanstack-start.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "tailwind.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "esk",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:app": "turbo run dev --filter=@esk/app",
+    "dev:web": "turbo run dev --filter=@esk/web",
+    "dev:api": "turbo run dev --filter=@esk/api",
+    "lint": "turbo run lint",
+    "lint:app": "turbo run lint --filter=@esk/app",
+    "lint:web": "turbo run lint --filter=@esk/web",
+    "lint:api": "turbo run lint --filter=@esk/api",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.15",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ],
+  "dependencies": {
+    "esk": "."
+  }
+}

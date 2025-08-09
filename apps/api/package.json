@@ -1,0 +1,18 @@
+{
+  "name": "@esk/api",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "hono": "^4.9.0"
+  },
+  "devDependencies": {
+    "@esk/eslint-config": "workspace:*",
+    "@esk/prettier-config": "workspace:*",
+    "@esk/typescript-config": "workspace:*",
+    "@types/bun": "latest",
+    "eslint": "^9.33.0",
+    "prettier": "^3.6.2"
+  }
+}

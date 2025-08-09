@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+package-lock.json
+pnpm-lock.yaml
+bun.lock
+yarn.lock
+
+# Docker
+compose.yml
+
+# Drizzle
+drizzle/
+
+# Tanstack Router
+routeTree.gen.ts
+
+# Files
+.env
+
+# Folders
+dist/
+build/
+**/build
+**/public
