@@ -23,7 +23,7 @@ import { seo } from '@/utils/seo';
 
 import appCss from '@/config/app.css?url';
 
-interface RootRouteContext {
+export interface RootRouteContext {
   theme: Theme;
 }
 
@@ -77,6 +77,16 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     scripts: [
       {
         type: 'text/javascript',
+        children: `
+          (function() {
+            try {
+              var theme = document.cookie.match(/esk-ui-theme=([^;]+)/)?.[1] || 'light';
+              document.documentElement.className = theme;
+            } catch (e) {
+              document.documentElement.className = 'light';
+            }
+          })();
+        `,
       },
     ],
   }),
@@ -102,7 +112,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
 
   return (
-    <html className={theme} suppressHydrationWarning>
+    <html className={theme}>
       <head>
         <HeadContent />
       </head>

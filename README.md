@@ -128,17 +128,17 @@ Everything you need to build a production ready SaaS; a monorepo with a focus on
 
 <table>
   <tr>
-    <th>Category</th>
+    <th>Package</th>
     <th>Tool</th>
     <th>Status</th>
     <th>Docs</th>
     <th>Note</th>
   </tr>
   <tr>
-    <td>Misc</td>
+    <td>UI</td>
     <td>Progress Loader</td>
     <td>:white_check_mark:</td>
-    <td>:arrows_counterclockwise:</td>
+    <td>:white_check_mark:</td>
     <td></td>
   </tr>
 </table>
