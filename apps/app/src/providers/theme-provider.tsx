@@ -51,7 +51,7 @@ export function ThemeProvider({
     try {
       await setThemeServerFn({ data: newTheme });
       router.invalidate();
-    } catch (error) {
+    } catch {
       // Theme failed to set on server, we could revert optimistic update
       // setCurrentTheme(theme);
     }
@@ -72,7 +72,6 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (context === undefined)
     throw new Error('useTheme must be used within a ThemeProvider');
 

@@ -186,7 +186,7 @@ cp apps/app/.env.example apps/app/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
-4. Start the development server from either bun or turbo:
+3. Start the development server.
 
 ```ts
 bun dev // starts everything in development mode (web, app, api, email)
@@ -199,6 +199,12 @@ bun dev:email // starts the email app in development mode
 bun migrate // run migrations
 bun seed // run seed
 ```
+
+4. Deploy
+
+TBD
+
+For more information see [Getting Started](https://esk.run/getting-started)
 
 ## How to Use
 

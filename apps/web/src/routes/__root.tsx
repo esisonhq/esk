@@ -128,7 +128,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             Home
           </Link>
           <Link
-            // @ts-expect-error
+            // @ts-expect-error This route intentionally does not exist
             to="/this-route-does-not-exist"
             activeProps={{
               className: 'font-bold',

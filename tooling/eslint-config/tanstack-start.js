@@ -1,7 +1,6 @@
 import js from "@eslint/js";
-import { tanstackConfig } from "@tanstack/eslint-config";
 import pluginQuery from "@tanstack/eslint-plugin-query";
-import eslintConfigPrettier from "eslint-config-prettier";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
@@ -11,14 +10,14 @@ import { config as baseConfig } from "./base.js";
 /**
  * A custom ESLint configuration for libraries using Tanstack Start.
  *
- * @type {import("eslint").Linter.Config[]}
+ * @type {import("eslint").FlatConfig[]}
  * */
 export const tanstackStartConfig = [
   ...baseConfig,
   js.configs.recommended,
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
-  ...tanstackConfig,
+  ...pluginQuery.configs["flat/recommended"],
   {
     ...pluginReact.configs.flat.recommended,
     languageOptions: {
@@ -26,14 +25,6 @@ export const tanstackStartConfig = [
       globals: {
         ...globals.serviceworker,
       },
-    },
-  },
-  {
-    plugins: {
-      "@tanstack/query": pluginQuery,
-    },
-    rules: {
-      ...pluginQuery.configs.recommended.rules,
     },
   },
   {

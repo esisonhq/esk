@@ -1,5 +1,7 @@
 /**
  * Typescript implementation of NProgress.
+ * 
+ * Original version:
  * https://github.com/rstacruz/nprogress/issues/253
  *
  * NProgress is a lightweight progress bar for JS applications.
@@ -100,11 +102,10 @@ export class NProgress {
   }
 
   public set(n: number): NProgress {
-    const started = this.isStarted();
     n = this.clamp(n, this.settings.minimum || 0.08, 1);
     this.status = n === 1 ? null : n;
 
-    const progress = this.render(!started);
+    const progress = this.render();
     const bar = progress.querySelector<HTMLElement>(this.settings.barSelector);
     const speed = this.settings.speed || 200;
     const ease = this.settings.easing || 'linear';
@@ -145,7 +146,7 @@ export class NProgress {
     return typeof this.status === 'number';
   }
 
-  private render(fromStart = false): HTMLElement {
+  private render(): HTMLElement {
     if (this.isRendered()) return document.getElementById('nprogress')!;
 
     const progress = document.createElement('div');
