@@ -20,7 +20,5 @@ import { twMerge } from 'tailwind-merge';
  * ```
  */
 export function cn(...inputs: ClassValue[]): string {
-  // First, clsx filters and joins the class values into a single string
-  // Then, twMerge resolves any Tailwind CSS class conflicts
   return twMerge(clsx(inputs));
 }

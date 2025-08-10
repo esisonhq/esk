@@ -24,30 +24,22 @@ const MOBILE_BREAKPOINT = 768;
  * ```
  */
 export function useIsMobile(): boolean {
-  // State to track whether the viewport is considered mobile
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
     undefined,
   );
 
   React.useEffect(() => {
-    // Create a media query list for the mobile breakpoint
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
 
-    // Handler to update state based on current window width
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
 
-    // Listen for changes in the media query
     mql.addEventListener('change', onChange);
-
-    // Set initial value on mount
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
 
-    // Cleanup listener on unmount
     return () => mql.removeEventListener('change', onChange);
   }, []);
 
-  // Ensure the return value is always a boolean
   return !!isMobile;
 }
