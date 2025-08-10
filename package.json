@@ -8,6 +8,7 @@
     "dev:web": "turbo run dev --filter=@esk/web",
     "dev:api": "turbo run dev --filter=@esk/api",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "lint:app": "turbo run lint --filter=@esk/app",
     "lint:web": "turbo run lint --filter=@esk/web",
     "lint:api": "turbo run lint --filter=@esk/api",

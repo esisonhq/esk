@@ -1,9 +1,6 @@
-import { Hono } from 'hono'
+import app from './app.js';
 
-const app = new Hono()
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-export default app
+export default {
+  port: 3004,
+  fetch: app.fetch,
+};

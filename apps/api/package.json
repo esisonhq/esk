@@ -4,10 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "hono": "^4.9.0"
+    "@hono/zod-openapi": "^1.1.0",
+    "hono": "^4.9.0",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@esk/eslint-config": "workspace:*",
