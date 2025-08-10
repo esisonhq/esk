@@ -1,6 +1,12 @@
-import app from './app.js';
+import { serve } from '@hono/node-server';
 
-export default {
-  port: 3004,
+import app from '@/app';
+import env from '@/env';
+
+const port = env.PORT || 3004;
+console.log(`Server is running on port http://localhost:${port}`);
+
+serve({
   fetch: app.fetch,
-};
+  port,
+});
