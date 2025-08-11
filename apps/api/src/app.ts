@@ -1,24 +1,38 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
-import { requestId } from 'hono/request-id';
+/**
+ * Initializes and configures the Hono application.
+ *
+ * This setup includes:
+ * - Creating the base Hono app instance via `createApp()`
+ * - Registering OpenAPI documentation and Scalar UI via `createOpenAPI()`
+ * - Mounting route modules (e.g., `index.route`)
+ * - Defining a default root route (`/`) that returns a simple text response
+ *
+ * @remarks
+ * - The OpenAPI spec is exposed at `/docs`
+ * - The Scalar interactive API reference is available at `/reference`
+ * - All routes from the `routes` array are mounted at the root path (`/`)
+ *
+ * @see {@link createApp} for initializing the Hono app
+ * @see {@link createOpenAPI} for OpenAPI + Scalar documentation setup
+ */
+import { createApp } from '@/lib/create-app';
+import { createOpenAPI } from '@/lib/open-api/create-open-api';
+import index from '@/routes/index.route';
 
-import logger from '@/middleware/logger';
-import notFound from '@/middleware/not-found';
-import onError from '@/middleware/on-error';
+const app = createApp();
 
-const app = new OpenAPIHono();
-// Set request ID for tracking
-app.use(requestId());
+// OpenAPI + Scalar Documentation Setup
+createOpenAPI(app);
 
-// Logger middleware for debugging
-app.use(logger);
-
-// Routes
-app.get('/', (c) => {
-  return c.text('Hello Hono!');
+// Register Routes
+const routes = [index];
+routes.forEach((route) => {
+  app.route('/', route);
 });
 
-// Default Handlers
-app.notFound(notFound);
-app.onError(onError);
+// Root Index Route
+app.get('/', (c) => {
+  return c.text('Hello!');
+});
 
 export default app;

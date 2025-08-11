@@ -31,6 +31,7 @@ const logger: MiddlewareHandler = async (c, next) => {
       env.NODE_ENV === 'development'
         ? {
             target: 'pino-pretty',
+            level: env.LOG_LEVEL || 'info',
             options: {
               colorize: true,
               translateTime: 'HH:MM:ss Z',

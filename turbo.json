@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": [".env"],
-  "globalEnv": ["NODE_ENV", "PORT"],
+  "globalEnv": ["NODE_ENV"],
   "ui": "stream",
   "tasks": {
     "build": {
@@ -24,6 +24,7 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
+      "env": ["NODE_ENV", "PORT", "LOG_LEVEL"],
       "cache": false,
       "persistent": true
     }
