@@ -1,12 +1,12 @@
 /**
  * Adapted from https://github.com/prettymuchbryce/http-status-codes/blob/c840bc674ab043551b87194d1ebb5415f222abbe/scripts/update-codes.ts
- * Generates legacy format only.
+ * Generates const objects with `as const` assertion instead of enums.
  */
 
 import {
-  EnumMemberStructure,
   OptionalKind,
   Project,
+  PropertySignatureStructure,
   StructureKind,
 } from 'ts-morph';
 
@@ -24,13 +24,13 @@ interface JsonCode {
 }
 
 /**
- * Script to generate TypeScript enums for HTTP status codes and phrases.
+ * Script to generate TypeScript const objects for HTTP status codes and phrases.
  *
  * @remarks
  * - Uses `ts-morph` to programmatically create and overwrite source files.
- * - Outputs two enums: `StatusCodes` and `StatusPhrases`, each with JSDoc comments.
+ * - Outputs two const objects: `StatusCodes` and `StatusPhrases`, each with JSDoc comments.
  * - Deprecated codes are annotated with `@deprecated`.
- * - Only generates legacy format (enum-based).
+ * - Uses `as const` assertion for better type inference.
  *
  * @example
  * Run the script from the root of the project:
@@ -58,29 +58,47 @@ const run = async () => {
   }
   const Codes = (await response.json()) as JsonCode[];
 
-  // Generate enum members for StatusCodes
-  const statusCodeMembers: OptionalKind<EnumMemberStructure>[] = Codes.map(
-    ({ code, constant, comment, isDeprecated }: JsonCode) => {
+  // Helper function to format JSDoc comments
+  const formatComment = (comment: string): string => {
+    return comment.replace(/\n/g, '\n   * ');
+  };
+
+  // Generate properties for StatusCodes
+  const statusCodeProperties: OptionalKind<PropertySignatureStructure>[] =
+    Codes.map(({ code, constant, comment, isDeprecated }: JsonCode) => {
       const { doc, description } = comment;
       const deprecatedString = isDeprecated ? '@deprecated\n' : '';
+      const fullComment = `${deprecatedString}${doc}\n\n${description}`;
       return {
         name: constant,
-        value: code,
-        docs: [`${deprecatedString}${doc}\n\n${description}`],
+        type: code.toString(),
+        docs: [fullComment],
       };
-    },
-  ).sort(({ value: aValue }, { value: bValue }) => aValue - bValue);
+    }).sort(
+      ({ type: aType }, { type: bType }) => Number(aType) - Number(bType),
+    );
 
-  // Create StatusCodes enum file
+  // Create StatusCodes const object file
   const statusCodeFile = project.createSourceFile(
     'src/lib/http/status-codes.ts',
     {
       statements: [
         {
-          kind: StructureKind.Enum,
-          name: 'StatusCodes',
+          kind: StructureKind.VariableStatement,
           isExported: true,
-          members: statusCodeMembers,
+          declarations: [
+            {
+              name: 'StatusCodes',
+              initializer: `{
+${statusCodeProperties
+  .map((prop) => {
+    const comment = typeof prop.docs?.[0] === 'string' ? prop.docs[0] : '';
+    return `  /** ${formatComment(comment)} */\n  ${prop.name}: ${prop.type}`;
+  })
+  .join(',\n')},
+} as const`,
+            },
+          ],
         },
       ],
     },
@@ -89,28 +107,39 @@ const run = async () => {
     },
   );
 
-  // Create StatusPhrases enum file
-  const reasonPhraseMembers: OptionalKind<EnumMemberStructure>[] = Codes.map(
-    ({ phrase, constant, comment, isDeprecated }: JsonCode) => {
+  // Create StatusPhrases const object file
+  const reasonPhraseProperties: OptionalKind<PropertySignatureStructure>[] =
+    Codes.map(({ phrase, constant, comment, isDeprecated }: JsonCode) => {
       const { doc, description } = comment;
       const deprecatedString = isDeprecated ? '@deprecated\n' : '';
+      const fullComment = `${deprecatedString}${doc}\n\n${description}`;
       return {
         name: constant,
-        value: phrase,
-        docs: [`${deprecatedString}${doc}\n\n${description}`],
+        type: `"${phrase}"`,
+        docs: [fullComment],
       };
-    },
-  );
+    });
 
   const reasonPhraseFile = project.createSourceFile(
     'src/lib/http/status-phrases.ts',
     {
       statements: [
         {
-          kind: StructureKind.Enum,
-          name: 'StatusPhrases',
+          kind: StructureKind.VariableStatement,
           isExported: true,
-          members: reasonPhraseMembers,
+          declarations: [
+            {
+              name: 'StatusPhrases',
+              initializer: `{
+${reasonPhraseProperties
+  .map((prop) => {
+    const comment = typeof prop.docs?.[0] === 'string' ? prop.docs[0] : '';
+    return `  /** ${formatComment(comment)} */\n  ${prop.name}: ${prop.type}`;
+  })
+  .join(',\n')},
+} as const`,
+            },
+          ],
         },
       ],
     },
@@ -132,7 +161,7 @@ const run = async () => {
   await project.save();
 
   console.log(
-    'Successfully generated src/http-status-codes.ts and src/http-status-phrases.ts',
+    'Successfully generated src/lib/http/status-codes.ts and src/lib/http/status-phrases.ts',
   );
 };
 

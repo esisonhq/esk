@@ -10,14 +10,15 @@
  * @remarks
  * - The OpenAPI spec is exposed at `/docs`
  * - The Scalar interactive API reference is available at `/reference`
- * - All routes from the `routes` array are mounted at the root path (`/`)
+ * - All routes from `restRouter` are mounted at the root path (`/`)
  *
  * @see {@link createApp} for initializing the Hono app
  * @see {@link createOpenAPI} for OpenAPI + Scalar documentation setup
+ * @see {@link restRouter} for REST API routes
  */
 import { createApp } from '@/lib/create-app';
 import { createOpenAPI } from '@/lib/open-api/create-open-api';
-import index from '@/routes/index.route';
+import { restRouter } from '@/rest/routes';
 
 const app = createApp();
 
@@ -25,10 +26,7 @@ const app = createApp();
 createOpenAPI(app);
 
 // Register Routes
-const routes = [index];
-routes.forEach((route) => {
-  app.route('/', route);
-});
+app.route('/', restRouter);
 
 // Root Index Route
 app.get('/', (c) => {
