@@ -61,23 +61,7 @@ export function createRouter() {
  *
  * The resulting app is ready for route registration and server startup.
  *
- * @example
- * ```ts
- * import { createApp } from '@/app';
- *
- * const app = createApp();
- *
- * app.get('/', (c) => {
- *   return c.text('Hello!');
- * });
- *
- * export default app;
- * ```
- *
  * @returns A fully configured `OpenAPIHono` application instance.
- *
- * @see {@link createRouter} — Initializes the OpenAPI router with default hook
- * @see {@link https://hono.dev} — Hono framework documentation
  */
 export function createApp() {
   // Create the router

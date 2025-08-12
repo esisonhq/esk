@@ -13,22 +13,6 @@ import packageJSON from '../../../package.json' with { type: 'json' };
  * Scalar provides a modern, customizable interface for exploring and testing API endpoints.
  *
  * @param app - The Hono application instance extended with OpenAPI support.
- *
- * @example
- * ```ts
- * import { OpenAPIHono } from '@hono/zod-openapi';
- * import { createOpenAPI } from '@/lib/create-openapi';
- *
- * const app = new OpenAPIHono();
- * createOpenAPI(app);
- * ```
- *
- * @remarks
- * - The OpenAPI spec version and title are dynamically loaded from `package.json`.
- * - Scalar UI is configured with the `kepler` theme and JavaScript `fetch` client samples.
- *
- * @see {@link https://scalar.com/ Scalar Documentation}
- * @see {@link https://github.com/scalar/scalar/blob/main/documentation/integrations/hono.md Scalar Hono Integration}
  */
 export function createOpenAPI(app: AppOpenAPI) {
   app.doc('/docs', {

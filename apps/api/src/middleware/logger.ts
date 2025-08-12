@@ -10,16 +10,6 @@ import env from '@/env';
  * - Maps Hono's request/response objects to `pino-http`'s expected format.
  * - Injects a logger instance into the Hono context for downstream use.
  * - Ensures that the request ID is passed to the logger for traceability.
- *
- * @example
- * ```ts
- * app.use(logger);
- *
- * app.get('/', (c) => {
- *   c.var.logger.info('Something');
- *   return c.text('Hello world');
- * });
- * ```
  */
 const logger: MiddlewareHandler = async (c, next) => {
   // Pass hono's request-id to pino-http

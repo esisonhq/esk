@@ -9,16 +9,6 @@ import { StatusCodes } from '@/lib/http/status-codes.js';
  * This hook is intended to be passed as the `defaultHook` option when initializing an `OpenAPIHono` instance.
  * It intercepts failed validation results and returns a standardized JSON error response.
  *
- * @example
- * ```ts
- * import { OpenAPIHono } from '@hono/zod-openapi';
- * import defaultHook from '@/openapi/default-hook';
- *
- * const app = new OpenAPIHono({
- *   defaultHook,
- * });
- * ```
- *
  * @returns
  * If validation fails (`result.success === false`), responds with:
  * - HTTP status `422 Unprocessable Entity`
@@ -41,9 +31,6 @@ import { StatusCodes } from '@/lib/http/status-codes.js';
  *
  * @param result - The result of Zod validation, containing either success or error details.
  * @param c - The Hono context object, used to construct the response.
- *
- * @see {@link https://github.com/honojs/zod-openapi} — Zod OpenAPI integration for Hono
- * @see {@link https://zod.dev} — Zod validation library
  */
 const defaultHook: Hook<any, any, any, any> = (result, c) => {
   if (!result.success) {
