@@ -50,6 +50,7 @@
       "devDependencies": {
         "@esk/eslint-config": "workspace:*",
         "@esk/prettier-config": "workspace:*",
+        "@esk/tailwind-config": "workspace:*",
         "@esk/typescript-config": "workspace:*",
         "@tailwindcss/postcss": "^4.1.11",
         "@types/node": "^22.5.4",
@@ -80,6 +81,7 @@
       "devDependencies": {
         "@esk/eslint-config": "workspace:*",
         "@esk/prettier-config": "workspace:*",
+        "@esk/tailwind-config": "workspace:*",
         "@esk/typescript-config": "workspace:*",
         "@tailwindcss/postcss": "^4.1.11",
         "@types/node": "^22.5.4",
@@ -160,6 +162,17 @@
     "tooling/prettier-config": {
       "name": "@esk/prettier-config",
       "version": "0.0.1",
+    },
+    "tooling/tailwind-config": {
+      "name": "@esk/tailwind-config",
+      "version": "0.0.1",
+      "dependencies": {
+        "@tailwindcss/postcss": "^4.1.11",
+        "autoprefixer": "^10.4.21",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.11",
+        "tw-animate-css": "^1.3.6",
+      },
     },
     "tooling/typescript-config": {
       "name": "@esk/typescript-config",
@@ -308,6 +321,8 @@
     "@esk/eslint-config": ["@esk/eslint-config@workspace:tooling/eslint-config"],
 
     "@esk/prettier-config": ["@esk/prettier-config@workspace:tooling/prettier-config"],
+
+    "@esk/tailwind-config": ["@esk/tailwind-config@workspace:tooling/tailwind-config"],
 
     "@esk/typescript-config": ["@esk/typescript-config@workspace:tooling/typescript-config"],
 

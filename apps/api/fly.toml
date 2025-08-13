@@ -1,0 +1,41 @@
+app = 'api'
+primary_region = 'ams'
+
+[build]
+  dockerfile = 'Dockerfile'
+  [build.args]
+    BUN_VERSION_BUILD = '1.2.19'
+    BUN_VERSION_PROD = '1.2.19-alpine'
+    TURBO_VERSION = '2.5.5'
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3000'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 1 
+  max_machines_running = 10
+  processes = ['app']
+
+# Health checks
+# Fly.io continuously pings your health endpoint
+# If health checks fail, Fly restarts the machine
+# Unhealthy machines are removed from load balancer
+# New deploys must pass health checks before going live
+[http_service.checks]
+  [http_service.checks.health]
+    grace_period = "10s"      # Wait 10s after deploy before checking
+    interval = "30s"          # Check every 30 seconds
+    method = "GET"            # HTTP GET request
+    timeout = "5s"            # Fail if no response in 5s
+    path = "/api/v1/health"   # Your health endpoint
+
+# Resource allocation
+[[vm]]
+  memory = '1gb' 
+  cpu_kind = 'shared'
+  cpus = 1 

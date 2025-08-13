@@ -1,0 +1,151 @@
+# Common Documentation
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+!README.md
+
+# Docker files
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+Dockerfile.*
+.dockerignore
+
+# Version control
+.git/
+.gitattributes
+.gitignore
+.gitmodules
+
+# Build outputs & Cache
+.next/
+dist/
+build/
+out/
+.turbo/
+.cache/
+.parcel-cache/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+.pnp.*
+
+# Lock files (optional - include if you want smaller images)
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Environment & Config
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+.env.example
+.env.template
+.envrc
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+.coverage/
+*.lcov
+junit.xml
+test-results/
+__tests__/
+**/*.test.*
+**/*.spec.*
+
+# TypeScript
+*.tsbuildinfo
+.tscache/
+*.d.ts.map
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Databases
+*.sqlite
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Editor & IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vim/
+.emacs.d/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Security
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+*.pem
+secrets/
+.secrets/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+azure-pipelines.yml
+.buildkite/
+
+# Monitoring & Profiling
+.clinic/
+.0x/
+flamegraph.html
+*.cpuprofile
+*.heapsnapshot
+
+# Monorepo (adjust based on your structure)
+packages/
+apps/
+!apps/api/
+tools/
+scripts/
+
+# Laravel (if mixed stack)
+bootstrap/cache/
+storage/framework/
+storage/logs/
+vendor/
+
+# Python (if applicable)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/

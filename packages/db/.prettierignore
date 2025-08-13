@@ -7,6 +7,11 @@ yarn.lock
 
 # Docker
 compose.yml
+.dockerignore
+**/.dockerignore
+**/Dockerfile
+**/Dockerfile.*
+**/docker-compose*.yml
 
 # Drizzle
 drizzle/
@@ -14,11 +19,28 @@ drizzle/
 # Tanstack Router
 routeTree.gen.ts
 
-# Files
-.env
+# Environment & Config
+.env*
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+.env.example
+.env.template
+.envrc
 
-# Folders
+# Git 
+.gitignore
+**/.gitignore
+
+# Build outputs
 dist/
 build/
 **/build
 **/public
+
+# Generated files
+**/*.gen.*
+**/*.generated.*
+**/routeTree.gen.ts
