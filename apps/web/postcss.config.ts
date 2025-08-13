@@ -1,8 +1,3 @@
-const config: import('postcss-load-config').Config = {
-  plugins: {
-    '@tailwindcss/postcss': {},
-    autoprefixer: {},
-  },
-};
+import config from '@esk/tailwind-config/postcss';
 
 export default config;

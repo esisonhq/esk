@@ -1,4 +1,4 @@
-import { config as baseConfig } from '@esk/ui/tailwind.config';
+import { config as baseConfig } from '@esk/tailwind-config/base';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {

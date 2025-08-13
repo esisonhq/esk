@@ -27,21 +27,7 @@ import { AppBindings } from '@/types/app';
  * The `defaultHook` ensures that any validation failures return a structured JSON response
  * with HTTP status `422 Unprocessable Entity`, including error details from Zod.
  *
- * @example
- * ```ts
- * import { createRouter } from '@/router';
- *
- * const router = createRouter();
- *
- * router.openapi(...); // Define OpenAPI routes
- *
- * export default router;
- * ```
- *
  * @returns A new `OpenAPIHono` instance typed with `AppBindings`, ready for route registration.
- *
- * @see {@link https://github.com/honojs/zod-openapi} — Zod OpenAPI integration for Hono
- * @see {@link https://zod.dev} — Zod validation library
  */
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({

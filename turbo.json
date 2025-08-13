@@ -24,7 +24,7 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
-      "env": ["NODE_ENV", "PORT", "LOG_LEVEL"],
+      "env": ["NODE_ENV", "PORT", "LOG_LEVEL", "DATABASE_PRIMARY_URL"],
       "cache": false,
       "persistent": true
     }

@@ -1,0 +1,18 @@
+{
+  "name": "@esk/tailwind-config",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./tailwind.css",
+    "./postcss": "./postcss.config.ts",
+    "./base": "./tailwind.config.ts"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "tw-animate-css": "^1.3.6"
+  }
+}

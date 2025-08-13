@@ -1,3 +1,4 @@
+@import '@esk/tailwind-config';
 @import '@esk/ui/globals.css';
 
 @layer base {

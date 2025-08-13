@@ -3,7 +3,7 @@ import { createRoute, z } from '@hono/zod-openapi';
 import { StatusCodes } from '@/lib/http/status-codes';
 import { AppRouteHandler } from '@/types/app';
 
-const listRoute = createRoute({
+const route = createRoute({
   path: '/',
   method: 'get',
   tags: ['Tasks'],
@@ -19,12 +19,9 @@ const listRoute = createRoute({
   },
 });
 
-type ListRoute = typeof listRoute;
-
-const listHandler: AppRouteHandler<ListRoute> = async (c) => {
+const handler: AppRouteHandler<typeof route> = async (c) => {
   const tasks = ['Task 1', 'Task 2', 'Task 3'];
-  return c.json(tasks);
+  return c.json(tasks, StatusCodes.OK);
 };
 
-export { listHandler, listRoute };
-export type { ListRoute };
+export const list = { route, handler };

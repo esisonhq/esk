@@ -24,6 +24,7 @@
     "@esk/eslint-config": "workspace:*",
     "@esk/prettier-config": "workspace:*",
     "@esk/typescript-config": "workspace:*",
+    "@esk/tailwind-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.5.4",
     "@types/react": "^19.0.8",

@@ -16,17 +16,32 @@ import path from 'node:path';
 import { z } from 'zod';
 
 /**
- * Loads and expands environment variables from the appropriate `.env` file.
- * Uses `.env.test` if `NODE_ENV` is `'test'`, otherwise uses `.env`.
+ * Load environment variables with better cross-platform support
  */
-expand(
-  config({
-    path: path.resolve(
-      process.cwd(),
-      process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-    ),
-  }),
-);
+const loadEnvironmentVariables = () => {
+  // Skip dotenv in production if no .env file exists
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Production mode: using platform environment variables');
+    return;
+  }
+
+  // Try to load .env file (local development)
+  const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+  const envPath = path.resolve(process.cwd(), envFile);
+
+  try {
+    const result = expand(config({ path: envPath }));
+    if (result.parsed) {
+      console.log(`Loaded environment variables from ${envPath}`);
+    } else {
+      console.log('No .env file found, using system environment variables');
+    }
+  } catch {
+    console.log('Could not load .env file, using system environment variables');
+  }
+};
+
+loadEnvironmentVariables();
 
 /**
  * Zod schema for validating required environment variables.
