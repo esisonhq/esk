@@ -1,0 +1,16 @@
+[build]
+  dockerfile = "Dockerfile"
+  
+[build.args]
+  BUN_VERSION_BUILD = "1.2.19"
+  BUN_VERSION_PROD = "1.2.19-alpine"
+  TURBO_VERSION = "2.5.5"
+
+[deploy]
+  healthcheckPath = "/health"
+  healthcheckTimeout = 300
+  restartPolicyType = "always"
+
+[environment]
+  NODE_ENV = "production"
+  PORT = "3000"

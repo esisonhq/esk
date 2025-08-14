@@ -1,27 +1,20 @@
 import { desc, eq } from 'drizzle-orm';
+
 import type { Database } from '../client';
-import { taskTable } from '../schemas/tasks';
-import type { insertTasksSchema, patchTasksSchema } from '../schemas/tasks';
-import type { z } from 'zod';
+import { taskTable, type InsertTask, type PatchTask } from '../schema';
 
-export type InsertTask = z.infer<typeof insertTasksSchema>;
-export type PatchTask = z.infer<typeof patchTasksSchema>;
-
-/**
- * Task-related database queries.
- */
 export const taskQueries = {
   /**
    * Get all tasks ordered by creation date (newest first).
    */
-  async getAll(db: Database) {
+  async list(db: Database) {
     return db.select().from(taskTable).orderBy(desc(taskTable.createdAt));
   },
 
   /**
    * Get a task by ID.
    */
-  async getById(db: Database, id: number) {
+  async getById(db: Database, id: string) {
     const [task] = await db
       .select()
       .from(taskTable)
@@ -45,17 +38,14 @@ export const taskQueries = {
    * Create a new task.
    */
   async create(db: Database, data: InsertTask) {
-    const [task] = await db
-      .insert(taskTable)
-      .values(data)
-      .returning();
+    const [task] = await db.insert(taskTable).values(data).returning();
     return task!;
   },
 
   /**
    * Update a task by ID.
    */
-  async update(db: Database, id: number, data: PatchTask) {
+  async update(db: Database, id: string, data: PatchTask) {
     const [task] = await db
       .update(taskTable)
       .set(data)
@@ -67,7 +57,7 @@ export const taskQueries = {
   /**
    * Delete a task by ID.
    */
-  async delete(db: Database, id: number) {
+  async delete(db: Database, id: string) {
     const [task] = await db
       .delete(taskTable)
       .where(eq(taskTable.id, id))
@@ -78,10 +68,10 @@ export const taskQueries = {
   /**
    * Toggle task completion status.
    */
-  async toggle(db: Database, id: number) {
+  async toggle(db: Database, id: string) {
     const task = await this.getById(db, id);
     if (!task) return null;
-    
+
     return this.update(db, id, { done: !task.done });
   },
 
@@ -89,10 +79,10 @@ export const taskQueries = {
    * Get task count by status.
    */
   async getStats(db: Database) {
-    const allTasks = await this.getAll(db);
-    const completed = allTasks.filter(task => task.done).length;
+    const allTasks = await this.list(db);
+    const completed = allTasks.filter((task) => task.done).length;
     const pending = allTasks.length - completed;
-    
+
     return {
       total: allTasks.length,
       completed,

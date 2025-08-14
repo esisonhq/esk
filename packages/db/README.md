@@ -1,36 +1,48 @@
 # @esk/db
 
-Provider-agnostic database layer with automatic replica routing, health monitoring, and seamless integration across the ESK stack.
+The Database package provides a powerful, provider-agnostic database layer with built-in replica support, health monitoring, and seamless integration with popular PostgreSQL providers.
 
-## Features
+## Key Features
 
-- **Provider Abstraction** - Switch between Supabase, Neon, or PostgreSQL without code changes
-- **Regional Replicas** - Automatic read replica selection based on geographic regions
-- **Health Monitoring** - Built-in database health checks and monitoring endpoints
-- **Zero Configuration** - Works out-of-the-box with sensible defaults
-- **Type Safe** - Full TypeScript support with Drizzle ORM
-- **Connection Pooling** - Optimized connection management per provider
+- **Provider Abstraction**: Switch between Supabase, Neon, Railway, or generic PostgreSQL without code changes
+- **Automatic Region Selection**: Intelligent replica routing based on geographic regions
+- **Health Monitoring**: Comprehensive database health checks and monitoring endpoints
+- **Connection Pooling**: Optimized connection management with configurable pool settings
+- **Type Safety**: Full TypeScript support with Drizzle ORM integration
+- **Zero Configuration**: Works out-of-the-box with sensible defaults
 
 ## Quick Start
 
-```bash
-# Environment setup
-DATABASE_PRIMARY_URL=postgresql://user:pass@host:5432/db
-DATABASE_REPLICAS=postgresql://replica1:5432/db,postgresql://replica2:5432/db
+### 1. Environment Setup
+
+Create your `.env` file with the minimum required configuration:
+
+```env
+# Required - your primary database
+DATABASE_PRIMARY_URL=postgresql://user:pass@host:5432/dbname
+
+# Optional - connection pooler (recommended for production)
+DATABASE_PRIMARY_POOLER_URL=postgresql://user:pass@host:6543/dbname
+
+# Optional - read replicas for better performance
+DATABASE_REPLICAS=postgresql://user:pass@replica1:5432/dbname,postgresql://user:pass@replica2:5432/dbname
 DATABASE_REGIONS=us-east,eu-west
-DATABASE_REGION=us-east
+DATABASE_REGION=us-east # Auto-detected - specify manually if needed
 ```
 
-```typescript
+### 2. Basic Usage
+
+```tsx
 import { connectDb } from '@esk/db/client';
 import { users } from '@esk/db/schema';
 
+// Get a database connection
 const db = await connectDb();
 
-// Reads use replicas automatically
+// Query data (automatically routed to replicas for reads)
 const allUsers = await db.select().from(users);
 
-// Writes use primary automatically
+// Write data (always goes to primary)
 const newUser = await db
   .insert(users)
   .values({
@@ -40,63 +52,59 @@ const newUser = await db
   .returning();
 ```
 
-## Supported Providers
+### 3. Health Monitoring
 
-| Provider       | Auto-Detection  | Regions        | Features                 |
-| -------------- | --------------- | -------------- | ------------------------ |
-| **Supabase**   | `*.supabase.co` | Fly.io regions | Pooler, SSL optimization |
-| **Neon**       | `*.neon.tech`   | AWS regions    | Serverless, autoscaling  |
-| **PostgreSQL** | Generic         | Custom         | Universal compatibility  |
-
-## Health Monitoring
-
-```bash
-# Quick health check
-npm run health:check
-
-# HTTP endpoint
-curl http://localhost:3000/api/v1/health
-```
-
-## Documentation
-
-TODO Update Links
-
-- **[Introduction](src/docs/intro.md)** - Complete overview and setup guide
-- **[Health Monitoring](src/docs/health.md)** - Database health checks and monitoring
-- **[Region Configuration](src/docs/region.md)** - Read replica setup and optimization
-- **[Usage Examples](src/docs/examples.md)** - Real-world usage patterns
-- **[Migration Guide](src/docs/migration.md)** - Migrating from other database setups
-- **[Troubleshooting](src/docs/troubleshooting.md)** - Common issues and solutions
-
-## ESK Stack Integration
-
-This package is designed for the ESK stack but works standalone:
-
-```typescript
-// In your Hono API (apps/api)
-import { connectDb } from '@esk/db/client';
+```tsx
+import { checkDatabaseHealth } from '@esk/db/utils/health';
 
 const db = await connectDb();
-app.get('/users', async (c) => {
-  const users = await db.select().from(userTable);
-  return c.json(users);
-});
+const health = await checkDatabaseHealth(db);
 
-// In your React app (apps/app)
-// Database operations via API calls
-const users = await fetch('/api/users').then((r) => r.json());
+console.log(`Database is ${health.status}`);
+console.log(`Response time: ${health.latency}ms`);
 ```
 
-## Commands
+See [Health Monitoring](./health.md) to learn more about database health checks and monitoring.
 
-```bash
-npm run health:check    # Database health check
-npm run health:monitor  # Continuous monitoring
-npm run db:migrate      # Run database migrations
-npm run db:generate     # Generate migration files
+## Supported Providers
+
+Supports any PostgreSQL provider. You can even mix them for replication.
+
+- Supabase
+- Neon
+- PlanetScale
+- Railway
+- Render
+- Custom
+
+## Configuration Options
+
+### Environment Variables
+
+| Variable                      | Required | Description                         |
+| ----------------------------- | -------- | ----------------------------------- |
+| `DATABASE_PRIMARY_URL`        | ✅       | Primary database connection string  |
+| `DATABASE_PRIMARY_POOLER_URL` | ❌       | Connection pooler URL (recommended) |
+| `DATABASE_REPLICAS`           | ❌       | Comma-separated replica URLs        |
+| `DATABASE_REGIONS`            | ❌       | Comma-separated region names        |
+| `DATABASE_REGION`             | ❌       | Override auto-detection             |
+
+### Provider Settings
+
+Each provider comes with optimized connection settings:
+
+```tsx title="utils/providers.ts"
+// Automatically configured based on provider
+const poolConfig = {
+  max: 10, // Maximum connections
+  idle_timeout: 20, // Idle timeout in seconds
+  connect_timeout: 10, // Connection timeout
+  ssl: true, // SSL configuration
+};
 ```
 
-## License
+### Replica and Region Detection
 
-MIT
+The system automatically tries to set the `DATABASE_REGION` environment variable by checking certain the presence of other environmental variables.
+
+See [Region Configuration](./region.md) to set up read replicas for better performance.

@@ -1,17 +1,24 @@
-import { createRoute, z } from '@hono/zod-openapi';
+import { createRoute } from '@hono/zod-openapi';
+
+import { taskQueries } from '@esk/db/queries';
 
 import { StatusCodes } from '@/lib/http/status-codes';
+import { tasksSchema } from '@/schemas/tasks';
 import { AppRouteHandler } from '@/types/app';
+import { serializeDates } from '@/utils/serialize-dates';
 
 const route = createRoute({
   path: '/',
   method: 'get',
   tags: ['Tasks'],
+  summary: 'List all tasks',
+  operationId: 'listTasks',
+  description: 'Retrieve a list of all tasks',
   responses: {
     [StatusCodes.OK]: {
       content: {
         'application/json': {
-          schema: z.array(z.string()),
+          schema: tasksSchema,
         },
       },
       description: 'The list of tasks',
@@ -20,8 +27,10 @@ const route = createRoute({
 });
 
 const handler: AppRouteHandler<typeof route> = async (c) => {
-  const tasks = ['Task 1', 'Task 2', 'Task 3'];
-  return c.json(tasks, StatusCodes.OK);
+  const db = c.get('db');
+
+  const result = await taskQueries.list(db);
+  return c.json(serializeDates(result), StatusCodes.OK);
 };
 
 export const list = { route, handler };

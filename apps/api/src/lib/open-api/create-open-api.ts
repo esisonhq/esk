@@ -15,7 +15,7 @@ import packageJSON from '../../../package.json' with { type: 'json' };
  * @param app - The Hono application instance extended with OpenAPI support.
  */
 export function createOpenAPI(app: AppOpenAPI) {
-  app.doc('/docs', {
+  app.doc('/openapi', {
     openapi: '3.0.0',
     info: {
       version: packageJSON.version,
@@ -26,7 +26,7 @@ export function createOpenAPI(app: AppOpenAPI) {
   app.get(
     '/reference',
     Scalar({
-      url: '/docs',
+      url: '/openapi',
       theme: 'kepler',
       defaultHttpClient: {
         targetKey: 'js',

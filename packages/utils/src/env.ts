@@ -48,16 +48,85 @@ loadEnvironmentVariables();
  */
 const EnvSchema = z
   .object({
+    // General
+    APP_NAME: z.string().default('esk'),
+
+    // Deployment
     NODE_ENV: z.string().default('development'),
+    PORT: z.coerce.number().default(3000),
+    HOST: z.string().default('localhost'),
+    ALLOWED_ORIGINS: z.string().default('http://localhost:3000'),
+
+    // Auth
+    BETTER_AUTH_SECRET: z.string(),
+    BETTER_AUTH_PATH: z.string().default('/auth'),
+
+    // Social Logins
+    APPLE_APP_BUNDLE_IDENTIFIER: z.string().optional(),
+    APPLE_CLIENT_ID: z.string().optional(),
+    APPLE_CLIENT_SECRET: z.string().optional(),
+    DISCORD_CLIENT_ID: z.string().optional(),
+    DISCORD_CLIENT_SECRET: z.string().optional(),
+    DROPBOX_CLIENT_ID: z.string().optional(),
+    DROPBOX_CLIENT_SECRET: z.string().optional(),
+    FACEBOOK_CLIENT_ID: z.string().optional(),
+    FACEBOOK_CLIENT_SECRET: z.string().optional(),
+    GITHUB_CLIENT_ID: z.string().optional(),
+    GITHUB_CLIENT_SECRET: z.string().optional(),
+    GITLAB_CLIENT_ID: z.string().optional(),
+    GITLAB_CLIENT_SECRET: z.string().optional(),
+    GITLAB_ISSUER: z.string().optional(),
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
+    LINKEDIN_CLIENT_ID: z.string().optional(),
+    LINKEDIN_CLIENT_SECRET: z.string().optional(),
+    MICROSOFT_CLIENT_ID: z.string().optional(),
+    MICROSOFT_CLIENT_SECRET: z.string().optional(),
+    REDDIT_CLIENT_ID: z.string().optional(),
+    REDDIT_CLIENT_SECRET: z.string().optional(),
+    ROBLOX_CLIENT_ID: z.string().optional(),
+    ROBLOX_CLIENT_SECRET: z.string().optional(),
+    SPOTIFY_CLIENT_ID: z.string().optional(),
+    SPOTIFY_CLIENT_SECRET: z.string().optional(),
+    TIKTOK_CLIENT_ID: z.string().optional(),
+    TIKTOK_CLIENT_KEY: z.string().optional(),
+    TIKTOK_CLIENT_SECRET: z.string().optional(),
+    TWITCH_CLIENT_ID: z.string().optional(),
+    TWITCH_CLIENT_SECRET: z.string().optional(),
+    VK_CLIENT_ID: z.string().optional(),
+    VK_CLIENT_SECRET: z.string().optional(),
+    ZOOM_CLIENT_ID: z.string().optional(),
+    ZOOM_CLIENT_SECRET: z.string().optional(),
+    X_CLIENT_ID: z.string().optional(),
+    X_CLIENT_SECRET: z.string().optional(),
+
+    // Email
+    RESEND_API_KEY: z.string(),
+
+    // Logging
+    LOG_LEVEL: z
+      .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+      .default('info'),
 
     // Primary Database
     DATABASE_PRIMARY_URL: z.url(),
+
+    // Transaction / Job Process Database
     DATABASE_PRIMARY_POOLER_URL: z.url(),
 
     // Provider-agnostic replica configuration
     DATABASE_REPLICAS: z.string().optional(), // Comma-separated URLs
     DATABASE_REGIONS: z.string().optional(), // Comma-separated regions (must match replica order)
-    DATABASE_REGION: z.string().optional(), // Current region
+
+    // Provider specific (auto-set)
+    DATABASE_REGION: z.string().optional(), // Current region, auto set or manual
+    FLY_REGION: z.string().optional(),
+    FLY_PRIMARY_REGION: z.string().optional(),
+    RENDER_SERVICE_REGION: z.string().optional(),
+    RAILWAY_REGION: z.string().optional(),
+    VERCEL_REGION: z.string().optional(),
+    AWS_REGION: z.string().optional(),
+    AWS_DEFAULT_REGION: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // Validate that replicas and regions arrays match length if both are provided
@@ -93,10 +162,10 @@ export type env = z.infer<typeof EnvSchema>;
  * Parses and validates the environment variables against the schema.
  * If validation fails, logs the errors and exits the process.
  */
-const { data: env, error } = EnvSchema.safeParse(process.env);
+const { data, error } = EnvSchema.safeParse(process.env);
 
 if (error) {
-  console.error('Invalid environment variables:');
+  console.error('Invalid env:');
   console.error(z.prettifyError(error));
   process.exit(1);
 }
@@ -104,4 +173,4 @@ if (error) {
 /**
  * The validated and parsed environment variables.
  */
-export default env!;
+export const env = data!;

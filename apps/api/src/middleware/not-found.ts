@@ -2,6 +2,7 @@ import type { NotFoundHandler } from 'hono';
 
 import { StatusCodes } from '@/lib/http/status-codes.js';
 import { StatusPhrases } from '@/lib/http/status-phrases.js';
+import { ErrorResponse } from '@/types/response';
 
 /**
  * Custom 404 Not Found handler for Hono.
@@ -38,7 +39,7 @@ const notFound: NotFoundHandler = (c) => {
         timestamp: new Date().toISOString(),
         path: c.req.path,
       },
-    },
+    } as ErrorResponse,
     StatusCodes.NOT_FOUND,
   );
 };

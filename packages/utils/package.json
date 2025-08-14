@@ -1,0 +1,24 @@
+{
+  "name": "@esk/utils",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit"
+  },
+  "exports": {
+    "./env": "./src/env.ts"
+  },
+  "dependencies": {
+    "zod": "^4.0.17",
+    "dotenv-expand": "^12.0.2"
+  },
+  "devDependencies": {
+    "@esk/eslint-config": "workspace:*",
+    "@esk/prettier-config": "workspace:*",
+    "@esk/typescript-config": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

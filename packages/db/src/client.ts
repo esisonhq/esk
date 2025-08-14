@@ -1,25 +1,32 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
 import { sql } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import env from './env';
-import { createDatabaseProvider } from './providers';
-import { withReplicas, type ReplicatedDatabase } from './replicas';
-import * as schema from './schemas';
+import { env } from '@esk/utils/env';
 
-// Create provider instance
-const provider = createDatabaseProvider();
+import * as schema from './schema';
+import {
+  getPoolConfigForUrl,
+  getReplicaRegions,
+  getReplicaUrls,
+} from './utils/providers';
+import { setDatabaseRegion } from './utils/region-detector';
+import { withReplicas, type ReplicatedDatabase } from './utils/replicas';
 
-// Primary PostgreSQL connection pool using provider configuration
+// Set the region before using env.DATABASE_REGION
+setDatabaseRegion();
+
+// Primary connection with provider-specific config
 const primaryPool = postgres(
-  provider.getPrimaryUrl(),
-  provider.getPoolConfig(),
+  env.DATABASE_PRIMARY_URL,
+  getPoolConfigForUrl(env.DATABASE_PRIMARY_URL),
 );
 
-// Create replica pools based on provider configuration
-const replicaPools = provider
-  .getReplicaUrls()
-  .map((url) => postgres(url, provider.getPoolConfig()));
+// Replica connections, each with their own provider config
+const replicaUrls = getReplicaUrls();
+const replicaPools = replicaUrls.map((url) =>
+  postgres(url, getPoolConfigForUrl(url)),
+);
 
 /**
  * Primary Drizzle ORM instance.
@@ -40,19 +47,19 @@ export const primaryDb = drizzle(primaryPool, {
  * @remarks
  * - Uses DATABASE_REGIONS array to match DATABASE_REPLICAS by index
  * - Falls back to round-robin for unknown regions
- * - Much simpler and more explicit than URL pattern matching
  */
 const getReplicaIndex = (): number => {
   const region = env.DATABASE_REGION;
-  const replicaUrls = provider.getReplicaUrls();
+  const replicaCount = replicaPools.length;
 
-  if (!region || replicaUrls.length === 0) {
-    // Simple round-robin based on timestamp for unknown regions
-    return Math.floor(Date.now() / 1000) % replicaPools.length;
+  // Fallback: round-robin if no region or no replicas
+  if (!region || replicaCount === 0) {
+    return Math.floor(Date.now() / 1000) % replicaCount;
   }
 
-  // Use provider's explicit region mapping
-  const index = provider.getReplicaIndexForRegion(region);
+  // Try to match region explicitly
+  const regions = getReplicaRegions();
+  const index = regions.findIndex((r) => r === region.toLowerCase());
 
   if (index !== -1 && index < replicaUrls.length) {
     console.log(
@@ -61,9 +68,9 @@ const getReplicaIndex = (): number => {
     return index;
   }
 
-  // Final fallback: round-robin if no region matches
+  // Final fallback: round-robin
   console.warn(`No replica found for region ${region}, using round-robin`);
-  return Math.floor(Date.now() / 1000) % replicaPools.length;
+  return Math.floor(Date.now() / 1000) % replicaCount;
 };
 
 /**

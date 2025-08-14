@@ -1,17 +1,27 @@
-import { createRouter } from '@/lib/create-app';
+import { createRouter } from '@/app';
+import { authRouter } from '@/lib/auth/routes';
+import { requireAuth } from '@/middleware/auth';
+import { withRateLimiter } from '@/middleware/rate-limiter';
+import { withRESTReadAfterWrite } from '@/rest/middleware/read-after-write';
 
-import { healthCheck } from './health';
-import taskRouter from './tasks';
+import healthRouter from './health';
+import tasksRouter from './tasks';
 
-const restRouter = createRouter()
-  // API Versioning
-  .basePath('/api/v1')
+// Public Routes
+const baseRouter = createRouter()
+  .use(withRateLimiter)
+  .use(withRESTReadAfterWrite)
+  .route('/', authRouter)
+  .route('/', healthRouter);
 
-  // Health check endpoint
-  .openapi(healthCheck.route, healthCheck.handler)
+// Protected Routes
+const protectedRestRouter = createRouter()
+  .use(requireAuth)
+  .basePath('/v1')
+  .route('/tasks', tasksRouter);
 
-  // Routes
-  .route('/', taskRouter);
+// Mount both routers
+const restRouter = baseRouter.route('/', protectedRestRouter);
 
 export { restRouter };
 export type RestRouter = typeof restRouter;

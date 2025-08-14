@@ -1,4 +1,4 @@
-import { createRouter } from '@/lib/create-app';
+import { createRouter } from '@/app';
 
 import { list } from './list';
 

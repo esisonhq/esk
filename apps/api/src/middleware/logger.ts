@@ -1,17 +1,26 @@
 import { MiddlewareHandler } from 'hono';
 import { pinoHttp } from 'pino-http';
 
-import env from '@/env';
+import { env } from '@esk/utils/env';
 
 /**
  * Middleware to integrate `pino-http` logging into a Hono application.
  *
+ * @description
+ * This middleware sets up structured logging using `pino-http`, optionally
+ * prettified in development mode via `pino-pretty`. It maps Hono's request/response
+ * objects to the format expected by `pino-http`, injects a logger instance into
+ * the Hono context, and ensures that the request ID is passed through for traceability.
+ *
  * @remarks
- * - Maps Hono's request/response objects to `pino-http`'s expected format.
- * - Injects a logger instance into the Hono context for downstream use.
- * - Ensures that the request ID is passed to the logger for traceability.
+ * - Uses `c.var.requestId` to propagate request ID to `pino-http`.
+ * - In development mode, enables pretty-printing with colorized output.
+ * - Compatible with Hono's context and middleware chaining.
+ *
+ * @param c - The Hono context object, containing request/response and env bindings.
+ * @param next - The next middleware or route handler in the chain.
  */
-const logger: MiddlewareHandler = async (c, next) => {
+export const withLogger: MiddlewareHandler = async (c, next) => {
   // Pass hono's request-id to pino-http
   c.env.incoming.id = c.var.requestId;
 
@@ -41,5 +50,3 @@ const logger: MiddlewareHandler = async (c, next) => {
 
   await next();
 };
-
-export default logger;

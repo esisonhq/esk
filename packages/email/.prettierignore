@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+package-lock.json
+pnpm-lock.yaml
+bun.lock
+yarn.lock
+
+# Docker
+compose.yml
+.dockerignore
+**/.dockerignore
+**/Dockerfile
+**/Dockerfile.*
+**/docker-compose*.yml
+
+# Drizzle
+drizzle/
+
+# Tanstack Router
+routeTree.gen.ts
+
+# Environment & Config
+.env*
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+.env.example
+.env.template
+.envrc
+
+# Git 
+.gitignore
+**/.gitignore
+
+# Build outputs
+dist/
+build/
+**/build
+**/public
+
+# Generated files
+**/*.gen.*
+**/*.generated.*
+**/routeTree.gen.ts

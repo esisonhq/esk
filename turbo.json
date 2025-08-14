@@ -1,7 +1,22 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": [".env"],
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": [
+    "NODE_ENV",
+    "PORT",
+    "LOG_LEVEL",
+    "DATABASE_PRIMARY_URL",
+    "DEPLOY_VENDOR",
+    "DEPLOY_ENV",
+    "DATABASE_REGION",
+    "FLY_REGION",
+    "FLY_PRIMARY_REGION",
+    "RENDER_SERVICE_REGION",
+    "RAILWAY_REGION",
+    "VERCEL_REGION",
+    "AWS_REGION",
+    "AWS_DEFAULT_REGION"
+  ],
   "ui": "stream",
   "tasks": {
     "build": {
@@ -23,8 +38,11 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+    "deploy": {
+      "dependsOn": ["build", "lint", "check-types"],
+      "cache": false
+    },
     "dev": {
-      "env": ["NODE_ENV", "PORT", "LOG_LEVEL", "DATABASE_PRIMARY_URL"],
       "cache": false,
       "persistent": true
     }

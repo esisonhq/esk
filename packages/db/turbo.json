@@ -16,10 +16,9 @@
     },
     "db:push": {
       "env": ["DATABASE_PRIMARY_URL"],
-      "dependsOn": ["^db:push"],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "apps/api/.env",
+        "../../apps/api/.env",
         "drizzle.config.ts",
         "src/**"
       ],
@@ -27,10 +26,9 @@
     },
     "db:generate": {
       "env": ["DATABASE_PRIMARY_URL"],
-      "dependsOn": ["^db:generate"],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "apps/api/.env",
+        "../../apps/api/.env",
         "drizzle.config.ts",
         "src/**"
       ],
@@ -38,8 +36,8 @@
     },
     "db:migrate": {
       "env": ["DATABASE_PRIMARY_URL"],
-      "dependsOn": ["^db:migrate"],
-      "inputs": ["$TURBO_DEFAULT$", "apps/api/.env", "migrations/**"],
+      "dependsOn": ["db:generate"],
+      "inputs": ["$TURBO_DEFAULT$", "../../apps/api/.env", "migrations/**"],
       "outputs": []
     },
     "db:studio": {

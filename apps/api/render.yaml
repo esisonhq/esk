@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: esk-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ../..
+    dockerArgs:
+      - BUN_VERSION_BUILD=1.2.19
+      - BUN_VERSION_PROD=1.2.19-alpine
+      - TURBO_VERSION=2.5.5
+    region: frankfurt
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    buildCommand: bun run build
+    startCommand: bun run dist/index.js
+    autoDeploy: true
+    branch: main

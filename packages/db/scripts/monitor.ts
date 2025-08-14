@@ -8,11 +8,7 @@
  * - bun run db:monitor watch    # Continuous monitoring
  */
 import { connectDb } from '@esk/db/client';
-import {
-  checkAllConnectionsHealth,
-  checkDatabaseHealth,
-  type HealthCheckResult,
-} from '@esk/db/utils/health';
+import { checkDatabaseHealth, type HealthCheckResult } from '@esk/db/health';
 
 interface MonitoringConfig {
   interval: number; // seconds
@@ -40,26 +36,11 @@ const formatHealth = (result: HealthCheckResult) => {
 const checkHealth = async (detailed = false): Promise<HealthCheckResult> => {
   try {
     const db = await connectDb();
+    const result = await checkDatabaseHealth(db);
 
-    if (detailed) {
-      const result = await checkAllConnectionsHealth(db);
-      console.log('=== Database Health Report ===');
-      console.log('Overall:', formatHealth(result.overall));
-      console.log('Primary:', formatHealth(result.primary));
+    console.log(formatHealth(result));
 
-      if (result.replicas.length > 0) {
-        console.log('Replicas:');
-        result.replicas.forEach((replica, index) => {
-          console.log(`  ${index + 1}:`, formatHealth(replica));
-        });
-      }
-
-      return result.overall;
-    } else {
-      const result = await checkDatabaseHealth(db);
-      console.log(formatHealth(result));
-      return result;
-    }
+    return result;
   } catch (error) {
     const errorResult: HealthCheckResult = {
       status: 'unhealthy',
@@ -162,12 +143,6 @@ Usage:
   bun run db:monitor detailed     # Detailed health report
   bun run db:monitor watch        # Continuous monitoring
   bun run db:monitor help         # Show this help
-
-Options for watch mode:
-  Set environment variables to customize:
-  - DB_MONITOR_INTERVAL=30        # Check interval in seconds (default: 30)
-  - DB_MONITOR_THRESHOLD=3        # Alert threshold (default: 3)
-  - DB_MONITOR_MAX_LATENCY=1000   # Max latency in ms (default: 1000)
       `);
       break;
 

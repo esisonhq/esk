@@ -1,8 +1,14 @@
 import type { ErrorHandler } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
+import { ZodError } from 'zod';
 
-import env from '@/env';
+import { env } from '@esk/utils/env';
+
 import { StatusCodes } from '@/lib/http/status-codes.js';
+import { StatusPhrases } from '@/lib/http/status-phrases';
+import { ErrorResponse } from '@/types/response';
+import { formatZodError } from '@/utils/format-zod-error';
 
 /**
  * Global error handler for Hono.
@@ -34,28 +40,69 @@ import { StatusCodes } from '@/lib/http/status-codes.js';
 const onError: ErrorHandler = (err, c) => {
   const isProduction = env.NODE_ENV === 'production';
 
-  const statusCode =
-    'status' in err && err.status !== StatusCodes.OK
-      ? (err.status as ContentfulStatusCode)
-      : StatusCodes.INTERNAL_SERVER_ERROR;
+  const timestamp = new Date().toISOString();
+  const requestId = c.get('requestId') || 'unknown';
+  const path = c.req.path;
 
-  const message = isProduction ? 'An unexpected error occurred.' : err.message;
+  // Log all errors for debugging
+  const logger = c.get('logger');
+  logger.error({
+    error: err,
+    requestId,
+    path,
+    method: c.req.method,
+    userAgent: c.req.header('User-Agent'),
+  });
 
+  // Handle HTTPException Error
+  if (err instanceof HTTPException) {
+    const code =
+      'status' in err && err.status !== StatusCodes.OK
+        ? (err.status as ContentfulStatusCode)
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+
+    const message = isProduction
+      ? 'An unexpected error occurred.'
+      : err.message;
+
+    return c.json(
+      {
+        success: false,
+        message,
+        error: {
+          code,
+          message,
+          timestamp,
+          requestId,
+          path,
+          ...(!isProduction && { stack: err.stack }),
+        },
+      } as ErrorResponse,
+      code,
+    );
+  }
+
+  // Handle ZodError
+  if (err instanceof ZodError) {
+    const errorResponse = formatZodError(err, c, !isProduction);
+    return c.json(errorResponse, StatusCodes.UNPROCESSABLE_ENTITY);
+  }
+
+  // Handle Other Errors
   return c.json(
     {
       success: false,
-      message,
+      message: StatusPhrases.INTERNAL_SERVER_ERROR,
       error: {
-        code: statusCode,
-        message,
-        timestamp: new Date().toISOString(),
-        ...(!isProduction && {
-          path: c.req.path,
-          stack: err.stack,
-        }),
+        code: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: StatusPhrases.INTERNAL_SERVER_ERROR,
+        timestamp,
+        requestId,
+        path,
+        ...(!isProduction && { stack: err.stack }),
       },
-    },
-    statusCode,
+    } as ErrorResponse,
+    StatusCodes.INTERNAL_SERVER_ERROR,
   );
 };
 

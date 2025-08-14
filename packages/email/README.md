@@ -1,0 +1,3 @@
+# @esk/email
+
+Email templates

@@ -1,10 +1,10 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
+import { env } from '@esk/utils/env';
+
 import type { Database } from './client';
-import env from './env';
-import { createDatabaseProvider } from './providers';
-import * as schema from './schemas';
+import * as schema from './schema';
 
 /**
  * Creates a new job-optimized database instance with its own connection pool.
@@ -25,11 +25,10 @@ import * as schema from './schemas';
  * - `disconnect`: a function to gracefully close the connection pool
  */
 export const createJobDb = () => {
-  const provider = createDatabaseProvider();
-
-  // Override provider config for job-specific optimizations
+  // Config for job-specific optimizations
   const jobPoolConfig = {
-    ...provider.getPoolConfig(),
+    prepare: false,
+    ssl: 'require' as const,
     max: 1, // Critical: only 1 connection per job to avoid flooding pooler
     idle_timeout: 10, // Free idle clients very quickly (10 seconds)
     max_lifetime: 60 * 30, // Close connections after 30 minutes
