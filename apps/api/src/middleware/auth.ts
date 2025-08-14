@@ -18,8 +18,6 @@ export const withAuth: MiddlewareHandler = async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
   if (!session) {
-    // Continue without authentication for now
-    // We'll verify authentication later with `requireAuth`
     c.set('user', null);
     c.set('session', null);
     return next();

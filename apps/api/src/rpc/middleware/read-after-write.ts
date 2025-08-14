@@ -1,10 +1,5 @@
 import { replicationCache } from '@esk/db/cache';
-import type { Database } from '@esk/db/client';
-
-// Type guard for replicated database
-type DatabaseWithPrimary = Database & {
-  usePrimaryOnly: () => Database;
-};
+import type { Database, DatabaseWithPrimary } from '@esk/db/client';
 
 /**
  * tRPC middleware that handles replication lag based on mutation operations.
@@ -62,12 +57,8 @@ export const withRPCReadAfterWrite = async <TReturn>(opts: {
         replicationCache.set(cacheKey);
 
         // Use primary-only mode if available
-        if (
-          typeof ctx.db === 'object' &&
-          ctx.db !== null &&
-          'usePrimaryOnly' in ctx.db
-        ) {
-          const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+        const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+        if (dbWithPrimary.usePrimaryOnly) {
           finalDb = dbWithPrimary.usePrimaryOnly();
         }
       }
@@ -82,12 +73,8 @@ export const withRPCReadAfterWrite = async <TReturn>(opts: {
           );
 
           // Use primary-only mode if available
-          if (
-            typeof ctx.db === 'object' &&
-            ctx.db !== null &&
-            'usePrimaryOnly' in ctx.db
-          ) {
-            const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+          const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+          if (dbWithPrimary.usePrimaryOnly) {
             finalDb = dbWithPrimary.usePrimaryOnly();
           }
         } else {
@@ -105,12 +92,8 @@ export const withRPCReadAfterWrite = async <TReturn>(opts: {
     if (type === 'mutation') {
       ctx.logger.debug('tRPC Anonymous mutation, using primary DB');
 
-      if (
-        typeof ctx.db === 'object' &&
-        ctx.db !== null &&
-        'usePrimaryOnly' in ctx.db
-      ) {
-        const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+      const dbWithPrimary = ctx.db as DatabaseWithPrimary;
+      if (dbWithPrimary.usePrimaryOnly) {
         finalDb = dbWithPrimary.usePrimaryOnly();
       }
     }

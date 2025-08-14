@@ -1,14 +1,9 @@
 import { createMiddleware } from 'hono/factory';
 
 import { replicationCache } from '@esk/db/cache';
-import type { Database } from '@esk/db/client';
+import type { DatabaseWithPrimary } from '@esk/db/client';
 
 import type { AppBindings } from '@/types/app';
-
-// Type guard for replicated database
-type DatabaseWithPrimary = Database & {
-  usePrimaryOnly: () => Database;
-};
 
 /**
  * Database middleware that handles replication lag based on mutation operations.
@@ -49,8 +44,8 @@ export const withRESTReadAfterWrite = createMiddleware<AppBindings>(
           replicationCache.set(cacheKey);
 
           // Use primary-only mode if available
-          if (typeof db === 'object' && db !== null && 'usePrimaryOnly' in db) {
-            const dbWithPrimary = db as DatabaseWithPrimary;
+          const dbWithPrimary = db as DatabaseWithPrimary;
+          if (dbWithPrimary.usePrimaryOnly) {
             finalDb = dbWithPrimary.usePrimaryOnly();
           }
         }
@@ -65,12 +60,8 @@ export const withRESTReadAfterWrite = createMiddleware<AppBindings>(
             );
 
             // Use primary-only mode if available
-            if (
-              typeof db === 'object' &&
-              db !== null &&
-              'usePrimaryOnly' in db
-            ) {
-              const dbWithPrimary = db as DatabaseWithPrimary;
+            const dbWithPrimary = db as DatabaseWithPrimary;
+            if (dbWithPrimary.usePrimaryOnly) {
               finalDb = dbWithPrimary.usePrimaryOnly();
             }
           } else {
@@ -94,8 +85,8 @@ export const withRESTReadAfterWrite = createMiddleware<AppBindings>(
       if (operationType === 'mutation') {
         logger.debug('Anonymous mutation, using primary DB');
 
-        if (typeof db === 'object' && db !== null && 'usePrimaryOnly' in db) {
-          const dbWithPrimary = db as DatabaseWithPrimary;
+        const dbWithPrimary = db as DatabaseWithPrimary;
+        if (dbWithPrimary.usePrimaryOnly) {
           finalDb = dbWithPrimary.usePrimaryOnly();
         }
       }

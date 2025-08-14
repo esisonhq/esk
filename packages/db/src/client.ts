@@ -11,7 +11,7 @@ import {
   getReplicaUrls,
 } from './utils/providers';
 import { setDatabaseRegion } from './utils/region-detector';
-import { withReplicas, type ReplicatedDatabase } from './utils/replicas';
+import { withReplicas } from './utils/replicas';
 
 // Set the region before using env.DATABASE_REGION
 setDatabaseRegion();
@@ -85,8 +85,8 @@ const getReplicaIndex = (): number => {
  *
  * @returns A region-aware database instance with read/write routing.
  */
-export const connectDb = async (retries = 3): Promise<Database> => {
-  const connectWithRetry = async (attempt: number): Promise<Database> => {
+export const connectDb = async (retries = 3) => {
+  const connectWithRetry = async (attempt: number) => {
     try {
       // If no replicas are configured, return primary-only instance
       if (replicaPools.length === 0) {
@@ -136,7 +136,12 @@ export const connectDb = async (retries = 3): Promise<Database> => {
 };
 
 // Type representing a connected database instance with regional replica support.
-export type Database = typeof primaryDb | ReplicatedDatabase<typeof primaryDb>;
+export type Database = Awaited<ReturnType<typeof connectDb>>;
+
+export type DatabaseWithPrimary = Database & {
+  $primary?: Database;
+  usePrimaryOnly?: () => Database;
+};
 
 // Graceful shutdown helper for closing all database connections.
 export const closeDatabaseConnections = async () => {
