@@ -3,7 +3,7 @@ import { createRoute } from '@hono/zod-openapi';
 import { taskQueries } from '@esk/db/queries';
 
 import { StatusCodes } from '@/lib/http/status-codes';
-import { tasksSchema } from '@/schemas/tasks';
+import { tasksSchema } from '@/rest/schemas/tasks';
 import { AppRouteHandler } from '@/types/app';
 import { serializeDates } from '@/utils/serialize-dates';
 
