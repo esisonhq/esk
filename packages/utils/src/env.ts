@@ -49,7 +49,7 @@ loadEnvironmentVariables();
 const EnvSchema = z
   .object({
     // General
-    APP_NAME: z.string().default('esk'),
+    APP_NAME: z.string(),
 
     // Deployment
     NODE_ENV: z.string().default('development'),
@@ -109,24 +109,14 @@ const EnvSchema = z
       .default('info'),
 
     // Primary Database
-    DATABASE_PRIMARY_URL: z.url(),
+    DATABASE_URL: z.url(),
 
     // Transaction / Job Process Database
-    DATABASE_PRIMARY_POOLER_URL: z.url(),
+    DATABASE_POOLER_URL: z.url(),
 
     // Provider-agnostic replica configuration
     DATABASE_REPLICAS: z.string().optional(), // Comma-separated URLs
     DATABASE_REGIONS: z.string().optional(), // Comma-separated regions (must match replica order)
-
-    // Provider specific (auto-set)
-    DATABASE_REGION: z.string().optional(), // Current region, auto set or manual
-    FLY_REGION: z.string().optional(),
-    FLY_PRIMARY_REGION: z.string().optional(),
-    RENDER_SERVICE_REGION: z.string().optional(),
-    RAILWAY_REGION: z.string().optional(),
-    VERCEL_REGION: z.string().optional(),
-    AWS_REGION: z.string().optional(),
-    AWS_DEFAULT_REGION: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // Validate that replicas and regions arrays match length if both are provided

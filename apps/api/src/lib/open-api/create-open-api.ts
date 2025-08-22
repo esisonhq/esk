@@ -3,6 +3,8 @@ import { Scalar } from '@scalar/hono-api-reference';
 
 import packageJSON from '../../../package.json' with { type: 'json' };
 
+// TODO merge better-auth openapi spec
+
 /**
  * Configures OpenAPI documentation and Scalar API reference routes for a Hono application.
  *

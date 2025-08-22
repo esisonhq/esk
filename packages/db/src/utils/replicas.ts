@@ -205,6 +205,43 @@ export const replicaStrategies = {
     (replicas: Q[]): Q => {
       return replicas[preferredIndex] || replicas[0]!;
     },
+
+  /**
+   * Create a region-aware strategy with fallback.
+   *
+   * @param regions - Array of region names corresponding to replica indices
+   * @param currentRegion - Current region to match against
+   * @param fallbackStrategy - Strategy to use if no region match (defaults to roundRobin)
+   */
+  regionAware:
+    <
+      Q extends PgDatabase<
+        PgQueryResultHKT,
+        Record<string, unknown>,
+        TablesRelationalConfig
+      >,
+    >(
+      regions: string[],
+      currentRegion: string | null,
+      fallbackStrategy?: (replicas: Q[]) => Q,
+    ) =>
+    (replicas: Q[]): Q => {
+      if (currentRegion && regions.length > 0) {
+        const regionIndex = regions.findIndex(
+          (region) => region.toLowerCase() === currentRegion.toLowerCase(),
+        );
+
+        if (regionIndex !== -1 && regionIndex < replicas.length) {
+          return replicas[regionIndex]!;
+        }
+      }
+
+      // Use fallback or default to roundRobin
+      const fallback =
+        fallbackStrategy ||
+        ((reps: Q[]) => reps[Math.floor(Date.now() / 1000) % reps.length]!);
+      return fallback(replicas);
+    },
 } as const;
 
 /**

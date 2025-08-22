@@ -9,6 +9,8 @@ import { env } from '@esk/utils/env';
 
 import { configuredProviders } from './providers';
 
+// TODO move email templates
+
 /**
  * Initializes and configures the authentication system using `better-auth`.
  *

@@ -2,30 +2,18 @@ import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import { env } from '@esk/utils/env';
-
 import * as schema from './schema';
-import {
-  getPoolConfigForUrl,
-  getReplicaRegions,
-  getReplicaUrls,
-} from './utils/providers';
-import { setDatabaseRegion } from './utils/region-detector';
-import { withReplicas } from './utils/replicas';
+import { getDatabaseConfig, getRegion } from './utils/get-config';
+import { replicaStrategies, withReplicas } from './utils/replicas';
 
-// Set the region before using env.DATABASE_REGION
-setDatabaseRegion();
+const config = getDatabaseConfig();
 
 // Primary connection with provider-specific config
-const primaryPool = postgres(
-  env.DATABASE_PRIMARY_URL,
-  getPoolConfigForUrl(env.DATABASE_PRIMARY_URL),
-);
+const primaryPool = postgres(config.primary.url, config.primary.poolConfig);
 
 // Replica connections, each with their own provider config
-const replicaUrls = getReplicaUrls();
-const replicaPools = replicaUrls.map((url) =>
-  postgres(url, getPoolConfigForUrl(url)),
+const replicaPools = config.replicas.map((replica) =>
+  postgres(replica.url, replica.poolConfig),
 );
 
 /**
@@ -40,38 +28,6 @@ export const primaryDb = drizzle(primaryPool, {
   schema,
   casing: 'snake_case',
 });
-
-/**
- * Get replica index based on current region using explicit region mapping.
- *
- * @remarks
- * - Uses DATABASE_REGIONS array to match DATABASE_REPLICAS by index
- * - Falls back to round-robin for unknown regions
- */
-const getReplicaIndex = (): number => {
-  const region = env.DATABASE_REGION;
-  const replicaCount = replicaPools.length;
-
-  // Fallback: round-robin if no region or no replicas
-  if (!region || replicaCount === 0) {
-    return Math.floor(Date.now() / 1000) % replicaCount;
-  }
-
-  // Try to match region explicitly
-  const regions = getReplicaRegions();
-  const index = regions.findIndex((r) => r === region.toLowerCase());
-
-  if (index !== -1 && index < replicaUrls.length) {
-    console.log(
-      `Selected replica ${index} for region ${region} (explicit mapping)`,
-    );
-    return index;
-  }
-
-  // Final fallback: round-robin
-  console.warn(`No replica found for region ${region}, using round-robin`);
-  return Math.floor(Date.now() / 1000) % replicaCount;
-};
 
 /**
  * Connects to the database with regional read replicas and retry logic.
@@ -105,21 +61,35 @@ export const connectDb = async (retries = 3) => {
         }),
       );
 
-      const replicaIndex = getReplicaIndex();
+      // Create region-aware replica selection strategy
+      const createRegionStrategy = () => {
+        const currentRegion = getRegion();
+
+        if (currentRegion && config.replicaRegions.length > 0) {
+          // Find region-matching replica
+          const regionIndex = config.replicaRegions.findIndex(
+            (region) => region.toLowerCase() === currentRegion.toLowerCase(),
+          );
+
+          if (regionIndex !== -1 && regionIndex < replicaDbs.length) {
+            console.log(
+              `Using replica ${regionIndex} for region ${currentRegion} (explicit mapping)`,
+            );
+            return replicaStrategies.regionBased(regionIndex);
+          }
+        }
+
+        // Fallback to round-robin
+        console.log(
+          `Using round-robin replica selection${currentRegion ? ` (no match for region ${currentRegion})` : ''}`,
+        );
+        return replicaStrategies.roundRobin;
+      };
 
       return withReplicas(
         primaryDb,
         replicaDbs as [typeof primaryDb, ...typeof replicaDbs],
-        (replicas) => {
-          const selectedReplica = replicas[replicaIndex];
-          if (!selectedReplica) {
-            console.warn(
-              `Replica index ${replicaIndex} not available, using first replica`,
-            );
-            return replicas[0]!;
-          }
-          return selectedReplica;
-        },
+        createRegionStrategy(),
       );
     } catch (error) {
       if (attempt >= retries) {

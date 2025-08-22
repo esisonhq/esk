@@ -1,6 +1,5 @@
 import { createRouter } from '@/app';
 import { authRouter } from '@/lib/auth/routes';
-import { requireAuth } from '@/middleware/auth';
 import { withRateLimiter } from '@/middleware/rate-limiter';
 import { withRESTReadAfterWrite } from '@/rest/middleware/read-after-write';
 
@@ -15,10 +14,10 @@ const baseRouter = createRouter()
   .route('/', healthRouter);
 
 // Protected Routes
+// .use(requireAuth)
 const protectedRestRouter = createRouter()
-  .use(requireAuth)
   .basePath('/v1')
-  .route('/tasks', tasksRouter);
+  .route('/', tasksRouter);
 
 // Mount both routers
 const restRouter = baseRouter.route('/', protectedRestRouter);

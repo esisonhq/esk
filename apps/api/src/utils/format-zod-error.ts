@@ -2,7 +2,7 @@ import type { Context } from 'hono';
 import { ZodError } from 'zod';
 
 import { StatusCodes } from '@/lib/http/status-codes';
-import type { ErrorResponse } from '@/types/response';
+import type { ErrorResponse } from '@/types/error';
 
 /**
  * Formats a `ZodError` into a standardized error response object.
@@ -39,9 +39,10 @@ export function formatZodError(
       ...(includeDebugInfo && { stack: error.stack }),
       details: error.issues.map((issue) => ({
         field: issue.path.join('.'),
+        expected: 'expected' in issue ? issue.expected : undefined,
+        received: 'received' in issue ? issue.received : undefined,
         message: issue.message,
         code: issue.code,
-        received: 'received' in issue ? issue.received : undefined,
       })),
     },
   };

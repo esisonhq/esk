@@ -35,7 +35,7 @@ export const createJobDb = () => {
     connect_timeout: 10, // 10 second connection timeout
   };
 
-  const jobPool = postgres(env.DATABASE_PRIMARY_POOLER_URL!, jobPoolConfig);
+  const jobPool = postgres(env.DATABASE_POOLER_URL!, jobPoolConfig);
 
   const db = drizzle(jobPool, {
     schema,

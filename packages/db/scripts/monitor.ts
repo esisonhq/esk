@@ -33,7 +33,7 @@ const formatHealth = (result: HealthCheckResult) => {
   return `[${timestamp}] ${status} (${latency})`;
 };
 
-const checkHealth = async (detailed = false): Promise<HealthCheckResult> => {
+const checkHealth = async (): Promise<HealthCheckResult> => {
   try {
     const db = await connectDb();
     const result = await checkDatabaseHealth(db);
@@ -131,7 +131,7 @@ const main = async () => {
       break;
 
     case 'detailed':
-      await checkHealth(true);
+      await checkHealth();
       break;
 
     case 'help':

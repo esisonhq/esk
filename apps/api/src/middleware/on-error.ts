@@ -7,7 +7,7 @@ import { env } from '@esk/utils/env';
 
 import { StatusCodes } from '@/lib/http/status-codes.js';
 import { StatusPhrases } from '@/lib/http/status-phrases';
-import { ErrorResponse } from '@/types/response';
+import { ErrorResponse } from '@/types/error';
 import { formatZodError } from '@/utils/format-zod-error';
 
 /**

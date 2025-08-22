@@ -19,15 +19,14 @@ Create your `.env` file with the minimum required configuration:
 
 ```env
 # Required - your primary database
-DATABASE_PRIMARY_URL=postgresql://user:pass@host:5432/dbname
+DATABASE_URL=postgresql://user:pass@host:5432/dbname
 
 # Optional - connection pooler (recommended for production)
-DATABASE_PRIMARY_POOLER_URL=postgresql://user:pass@host:6543/dbname
+DATABASE_POOLER_URL=postgresql://user:pass@host:6543/dbname
 
 # Optional - read replicas for better performance
 DATABASE_REPLICAS=postgresql://user:pass@replica1:5432/dbname,postgresql://user:pass@replica2:5432/dbname
 DATABASE_REGIONS=us-east,eu-west
-DATABASE_REGION=us-east # Auto-detected - specify manually if needed
 ```
 
 ### 2. Basic Usage
@@ -81,13 +80,12 @@ Supports any PostgreSQL provider. You can even mix them for replication.
 
 ### Environment Variables
 
-| Variable                      | Required | Description                         |
-| ----------------------------- | -------- | ----------------------------------- |
-| `DATABASE_PRIMARY_URL`        | ✅       | Primary database connection string  |
-| `DATABASE_PRIMARY_POOLER_URL` | ❌       | Connection pooler URL (recommended) |
-| `DATABASE_REPLICAS`           | ❌       | Comma-separated replica URLs        |
-| `DATABASE_REGIONS`            | ❌       | Comma-separated region names        |
-| `DATABASE_REGION`             | ❌       | Override auto-detection             |
+| Variable              | Required | Description                         |
+| --------------------- | -------- | ----------------------------------- |
+| `DATABASE_URL`        | ✅       | Primary database connection string  |
+| `DATABASE_POOLER_URL` | ❌       | Connection pooler URL (recommended) |
+| `DATABASE_REPLICAS`   | ❌       | Comma-separated replica URLs        |
+| `DATABASE_REGIONS`    | ❌       | Comma-separated region names        |
 
 ### Provider Settings
 
@@ -104,7 +102,5 @@ const poolConfig = {
 ```
 
 ### Replica and Region Detection
-
-The system automatically tries to set the `DATABASE_REGION` environment variable by checking certain the presence of other environmental variables.
 
 See [Region Configuration](./region.md) to set up read replicas for better performance.

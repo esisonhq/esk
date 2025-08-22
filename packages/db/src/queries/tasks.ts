@@ -1,14 +1,29 @@
 import { desc, eq } from 'drizzle-orm';
 
 import type { Database } from '../client';
-import { taskTable, type InsertTask, type PatchTask } from '../schema';
+import { taskTable } from '../schema';
+
+type CreateTaskData = {
+  name: string;
+  done?: boolean;
+};
+
+type UpdateTaskData = {
+  name?: string;
+  done?: boolean;
+};
 
 export const taskQueries = {
   /**
    * Get all tasks ordered by creation date (newest first).
    */
   async list(db: Database) {
-    return db.select().from(taskTable).orderBy(desc(taskTable.createdAt));
+    const tasks = await db
+      .select()
+      .from(taskTable)
+      .orderBy(desc(taskTable.createdAt));
+
+    return tasks;
   },
 
   /**
@@ -20,24 +35,14 @@ export const taskQueries = {
       .from(taskTable)
       .where(eq(taskTable.id, id))
       .limit(1);
-    return task;
-  },
 
-  /**
-   * Get tasks by completion status.
-   */
-  async getByStatus(db: Database, done: boolean) {
-    return db
-      .select()
-      .from(taskTable)
-      .where(eq(taskTable.done, done))
-      .orderBy(desc(taskTable.createdAt));
+    return task;
   },
 
   /**
    * Create a new task.
    */
-  async create(db: Database, data: InsertTask) {
+  async create(db: Database, data: CreateTaskData) {
     const [task] = await db.insert(taskTable).values(data).returning();
     return task!;
   },
@@ -45,7 +50,7 @@ export const taskQueries = {
   /**
    * Update a task by ID.
    */
-  async update(db: Database, id: string, data: PatchTask) {
+  async update(db: Database, id: string, data: UpdateTaskData) {
     const [task] = await db
       .update(taskTable)
       .set(data)

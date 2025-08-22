@@ -15,5 +15,5 @@
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },
-  "cSpell.words": ["planetscale", "Supabase", "treeify"]
+  "cSpell.words": ["planetscale", "POOLER", "Supabase", "treeify"]
 }

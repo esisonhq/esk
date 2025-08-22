@@ -93,13 +93,22 @@ export const checkDatabaseHealthDetailed = async (
     // Extract results with proper typing
     const version =
       versionCheck.status === 'fulfilled'
-        ? ((Array.from(versionCheck.value)[0] as Record<string, unknown>)
-            ?.version as string)
+        ? ((
+            (versionCheck as PromiseFulfilledResult<unknown>).value as Record<
+              string,
+              unknown
+            >[]
+          )[0]?.version as string)
         : 'unknown';
 
     const stats =
       statsCheck.status === 'fulfilled'
-        ? (Array.from(statsCheck.value)[0] as Record<string, unknown>)
+        ? ((
+            (statsCheck as PromiseFulfilledResult<unknown>).value as Record<
+              string,
+              unknown
+            >[]
+          )[0] as Record<string, unknown>)
         : {};
 
     // Determine health status
@@ -164,8 +173,12 @@ export const checkReplicationLag = async (
         pg_is_in_recovery() as in_recovery
     `);
 
-    const primaryData = Array.from(primaryResult)[0] as Record<string, unknown>;
-    const replicaData = Array.from(replicaResult)[0] as Record<string, unknown>;
+    const primaryData = (
+      primaryResult as Record<string, unknown>[]
+    )[0] as Record<string, unknown>;
+    const replicaData = (
+      replicaResult as Record<string, unknown>[]
+    )[0] as Record<string, unknown>;
 
     // Calculate lag in bytes (simplified)
     const primaryLsn = primaryData.wal_lsn as string;
