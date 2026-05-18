@@ -1,6 +1,6 @@
 import type { Hook } from '@hono/zod-openapi';
 
-import { StatusCodes } from '@/lib/http/status-codes.js';
+import { HttpStatusCodes } from '@/lib/http/status-codes.js';
 import { formatZodError } from '@/utils/format-zod-error';
 
 /**
@@ -38,7 +38,7 @@ import { formatZodError } from '@/utils/format-zod-error';
 const defaultHook: Hook<any, any, any, any> = (result, c) => {
   if (!result.success) {
     const errorResponse = formatZodError(result.error, c);
-    return c.json(errorResponse, StatusCodes.UNPROCESSABLE_ENTITY);
+    return c.json(errorResponse, HttpStatusCodes.UNPROCESSABLE_ENTITY);
   }
 };
 

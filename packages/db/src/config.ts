@@ -37,7 +37,7 @@ export interface DatabaseConfig {
  *   myCustomProvider: {
  *     urlPatterns: ['myservice.com', 'custom-db.net'],
  *     max: 15,
- *     ssl: 'prefer',
+ *     ssl: 'require' as const,
  *     prepare: true,
  *   },
  *   // ... existing providers
@@ -108,7 +108,7 @@ export const PROVIDER_DEFAULTS: Record<string, ProviderConfig> = {
     max: 10,
     idle_timeout: 60,
     connect_timeout: 5,
-    ssl: 'require',
+    ssl: 'require' as const,
     prepare: false,
   },
 } as const;

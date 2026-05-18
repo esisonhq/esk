@@ -2,8 +2,8 @@ import { createRoute } from '@hono/zod-openapi';
 
 import { taskQueries } from '@esk/db/queries';
 
-import { StatusCodes } from '@/lib/http/status-codes';
-import { insertTaskSchema, taskSchema } from '@/rest/schemas/tasks';
+import { HttpStatusCodes } from '@/lib/http/status-codes';
+import { insertTaskSchema, taskSchema } from '@/schemas/tasks';
 import { AppRouteHandler } from '@/types/app';
 import { createValidationErrorSchema } from '@/types/error';
 import { serializeDates } from '@/utils/serialize-dates';
@@ -26,7 +26,7 @@ const route = createRoute({
     },
   },
   responses: {
-    [StatusCodes.CREATED]: {
+    [HttpStatusCodes.CREATED]: {
       content: {
         'application/json': {
           schema: taskSchema,
@@ -34,7 +34,7 @@ const route = createRoute({
       },
       description: 'The created task',
     },
-    [StatusCodes.UNPROCESSABLE_ENTITY]: {
+    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
         'application/json': {
           schema: createValidationErrorSchema(insertTaskSchema),
@@ -50,7 +50,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
   const task = c.req.valid('json');
 
   const createdTask = await taskQueries.create(db, task);
-  return c.json(serializeDates(createdTask), StatusCodes.CREATED);
+  return c.json(serializeDates(createdTask), HttpStatusCodes.CREATED);
 };
 
 export const create = { route, handler };

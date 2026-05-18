@@ -88,7 +88,7 @@ const run = async () => {
           isExported: true,
           declarations: [
             {
-              name: 'StatusCodes',
+              name: 'HttpStatusCodes',
               initializer: `{
 ${statusCodeProperties
   .map((prop) => {
@@ -129,7 +129,7 @@ ${statusCodeProperties
           isExported: true,
           declarations: [
             {
-              name: 'StatusPhrases',
+              name: 'HttpStatusPhrases',
               initializer: `{
 ${reasonPhraseProperties
   .map((prop) => {

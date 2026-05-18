@@ -189,15 +189,19 @@ cp apps/web/.env.example apps/web/.env
 3. Start the development server.
 
 ```ts
-bun dev // starts everything in development mode (web, app, api, email)
-bun dev:web // starts the web app in development mode
-bun dev:app // starts the app in development mode
-bun dev:api // starts the api in development mode
-bun dev:email // starts the email app in development mode
+bun dev       // starts everything in development mode (web, app, api, email)
+bun dev:web   // starts the web app in development mode
+bun dev:app   // starts the app in development mode
+bun dev:api   // starts the api in development mode
 
 // Database
-bun migrate // run migrations
-bun seed // run seed
+bun db:push     // Push updates directly to the database without creating migrations
+bun db:generate // Generate migrations
+bun db:migrate  // Apply migrations
+bun db:studio   // Run Drizzle Studio
+bun db:health   // Check the health of the database
+bun db:health:detailed    // Check the health of the database, provides more detail
+bun db:health:watch       // Check the health of the database, queries every 30 seconds
 ```
 
 4. Deploy

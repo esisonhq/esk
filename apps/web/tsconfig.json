@@ -1,7 +1,6 @@
 {
   "extends": "@esk/typescript-config/tanstack-start.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

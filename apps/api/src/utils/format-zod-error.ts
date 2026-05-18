@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
 import { ZodError } from 'zod';
 
-import { StatusCodes } from '@/lib/http/status-codes';
+import { HttpStatusCodes } from '@/lib/http/status-codes';
 import type { ErrorResponse } from '@/types/error';
 
 /**
@@ -31,7 +31,7 @@ export function formatZodError(
     success: false,
     message: 'Validation failed',
     error: {
-      code: StatusCodes.UNPROCESSABLE_ENTITY,
+      code: HttpStatusCodes.UNPROCESSABLE_ENTITY,
       message: 'Validation failed',
       timestamp,
       requestId,

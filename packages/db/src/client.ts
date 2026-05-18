@@ -44,14 +44,14 @@ export const primaryDb = drizzle(primaryPool, {
 export const connectDb = async (retries = 3) => {
   const connectWithRetry = async (attempt: number) => {
     try {
+      // Test primary connection
+      await primaryDb.execute(sql`SELECT 1`);
+
       // If no replicas are configured, return primary-only instance
       if (replicaPools.length === 0) {
         console.warn('No replica pools configured, using primary-only mode');
         return primaryDb;
       }
-
-      // Test primary connection
-      await primaryDb.execute(sql`SELECT 1`);
 
       // Create Drizzle instances for all replica pools
       const replicaDbs = replicaPools.map((pool) =>

@@ -112,7 +112,7 @@ const EnvSchema = z
     DATABASE_URL: z.url(),
 
     // Transaction / Job Process Database
-    DATABASE_POOLER_URL: z.url(),
+    DATABASE_POOLER_URL: z.string().optional(),
 
     // Provider-agnostic replica configuration
     DATABASE_REPLICAS: z.string().optional(), // Comma-separated URLs

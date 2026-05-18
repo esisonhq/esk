@@ -1,8 +1,8 @@
 import type { NotFoundHandler } from 'hono';
 
-import { StatusCodes } from '@/lib/http/status-codes.js';
-import { StatusPhrases } from '@/lib/http/status-phrases.js';
-import { ErrorResponse } from '@/types/response';
+import { HttpStatusCodes } from '@/lib/http/status-codes.js';
+import { HttpStatusPhrases } from '@/lib/http/status-phrases.js';
+import { NotFoundResponse } from '@/types/error';
 
 /**
  * Custom 404 Not Found handler for Hono.
@@ -29,18 +29,23 @@ import { ErrorResponse } from '@/types/response';
  * ```
  */
 const notFound: NotFoundHandler = (c) => {
+  const timestamp = new Date().toISOString();
+  const requestId = c.get('requestId') || 'unknown';
+  const path = c.req.path;
+
   return c.json(
     {
       success: false,
-      message: StatusPhrases.NOT_FOUND,
+      message: HttpStatusPhrases.NOT_FOUND,
       error: {
-        code: StatusCodes.NOT_FOUND,
-        message: StatusPhrases.NOT_FOUND,
-        timestamp: new Date().toISOString(),
-        path: c.req.path,
+        code: HttpStatusCodes.NOT_FOUND,
+        message: HttpStatusPhrases.NOT_FOUND,
+        timestamp,
+        requestId,
+        path,
       },
-    } as ErrorResponse,
-    StatusCodes.NOT_FOUND,
+    } as NotFoundResponse,
+    HttpStatusCodes.NOT_FOUND,
   );
 };
 

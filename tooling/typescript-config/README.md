@@ -32,7 +32,6 @@ Choose the appropriate base config based on your project type:
 {
   "extends": "@repo/typescript-config/tanstack-start.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
@@ -48,7 +47,6 @@ Choose the appropriate base config based on your project type:
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
@@ -64,7 +62,6 @@ Choose the appropriate base config based on your project type:
 {
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

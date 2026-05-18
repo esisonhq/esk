@@ -5,29 +5,22 @@ import { taskQueries } from '@esk/db/queries';
 import { HttpStatusCodes } from '@/lib/http/status-codes';
 import { HttpStatusPhrases } from '@/lib/http/status-phrases';
 import { UUIDParamsSchema } from '@/schemas/ids';
-import { taskSchema } from '@/schemas/tasks';
 import { AppRouteHandler } from '@/types/app';
 import { createValidationErrorSchema, notFoundSchema } from '@/types/error';
-import { serializeDates } from '@/utils/serialize-dates';
 
 const route = createRoute({
   path: '/{id}',
-  method: 'get',
+  method: 'delete',
   tags: ['Tasks'],
-  summary: 'Retrieve a task',
-  operationId: 'getTask',
-  description: 'Retrieve a single task by its ID',
+  summary: 'Delete a task',
+  operationId: 'deleteTask',
+  description: 'Delete a task',
   request: {
     params: UUIDParamsSchema,
   },
   responses: {
-    [HttpStatusCodes.OK]: {
-      content: {
-        'application/json': {
-          schema: taskSchema,
-        },
-      },
-      description: 'The task',
+    [HttpStatusCodes.NO_CONTENT]: {
+      description: 'Task deleted',
     },
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: {
       content: {
@@ -52,7 +45,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
   const db = c.get('db');
   const { id } = c.req.valid('param');
 
-  const result = await taskQueries.getById(db, id);
+  const result = await taskQueries.delete(db, id);
 
   if (!result) {
     return c.json(
@@ -61,7 +54,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
     );
   }
 
-  return c.json(serializeDates(result), HttpStatusCodes.OK);
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
 
-export const get = { route, handler };
+export const remove = { route, handler };

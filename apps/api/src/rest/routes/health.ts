@@ -3,7 +3,7 @@ import { createRoute, z } from '@hono/zod-openapi';
 import { checkDatabaseHealthDetailed } from '@esk/db/health';
 
 import { createRouter } from '@/app';
-import { StatusCodes } from '@/lib/http/status-codes';
+import { HttpStatusCodes } from '@/lib/http/status-codes';
 import { AppRouteHandler } from '@/types/app';
 
 /**
@@ -25,7 +25,7 @@ const route = createRoute({
   summary: 'Database health check',
   description: 'Check the health status of the database connections',
   responses: {
-    [StatusCodes.OK]: {
+    [HttpStatusCodes.OK]: {
       content: {
         'application/json': {
           schema: z.object({
@@ -38,7 +38,7 @@ const route = createRoute({
       },
       description: 'Database is healthy',
     },
-    [StatusCodes.SERVICE_UNAVAILABLE]: {
+    [HttpStatusCodes.SERVICE_UNAVAILABLE]: {
       content: {
         'application/json': {
           schema: z.object({
@@ -51,7 +51,7 @@ const route = createRoute({
       },
       description: 'Database is degraded',
     },
-    [StatusCodes.INTERNAL_SERVER_ERROR]: {
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: {
       content: {
         'application/json': {
           schema: z.object({
@@ -94,7 +94,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
           latency: result.latency,
           details: result.details,
         },
-        StatusCodes.OK,
+        HttpStatusCodes.OK,
       );
     }
 
@@ -106,7 +106,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
           latency: result.latency,
           details: result.details,
         },
-        StatusCodes.SERVICE_UNAVAILABLE,
+        HttpStatusCodes.SERVICE_UNAVAILABLE,
       );
     }
 
@@ -116,7 +116,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
         error: result.error || 'Database health check failed',
         timestamp: result.timestamp.toISOString(),
       },
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      HttpStatusCodes.INTERNAL_SERVER_ERROR,
     );
   } catch (error) {
     return c.json(
@@ -125,7 +125,7 @@ const handler: AppRouteHandler<typeof route> = async (c) => {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       },
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      HttpStatusCodes.INTERNAL_SERVER_ERROR,
     );
   }
 };

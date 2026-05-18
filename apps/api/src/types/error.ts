@@ -1,5 +1,5 @@
-import { StatusCodes } from '@/lib/http/status-codes';
-import { StatusPhrases } from '@/lib/http/status-phrases';
+import { HttpStatusCodes } from '@/lib/http/status-codes';
+import { HttpStatusPhrases } from '@/lib/http/status-phrases';
 import { z } from '@hono/zod-openapi';
 
 /**
@@ -8,11 +8,11 @@ import { z } from '@hono/zod-openapi';
 export const apiErrorSchema = z.object({
   code: z.number().openapi({
     description: 'HTTP status code',
-    example: StatusCodes.UNPROCESSABLE_ENTITY,
+    example: HttpStatusCodes.UNPROCESSABLE_ENTITY,
   }),
   message: z.string().openapi({
     description: 'Error message',
-    example: StatusPhrases.UNPROCESSABLE_ENTITY,
+    example: HttpStatusPhrases.UNPROCESSABLE_ENTITY,
   }),
   timestamp: z.string().openapi({
     description: 'ISO timestamp when the error occurred',
@@ -44,7 +44,22 @@ export const errorResponseSchema = z.object({
   }),
   message: z.string().openapi({
     description: 'Error message',
-    example: StatusPhrases.UNPROCESSABLE_ENTITY,
+    example: HttpStatusPhrases.UNPROCESSABLE_ENTITY,
+  }),
+  error: apiErrorSchema,
+});
+
+/**
+ * Standard not found response schema
+ */
+export const notFoundSchema = z.object({
+  success: z.literal(false).openapi({
+    description: 'Indicates resource not found',
+    example: false,
+  }),
+  message: z.string().openapi({
+    description: 'Error message',
+    example: HttpStatusPhrases.NOT_FOUND,
   }),
   error: apiErrorSchema,
 });
@@ -76,13 +91,6 @@ export const validationErrorDetailsSchema = z.array(
     }),
   }),
 );
-
-export const notFoundSchema = z.object({
-  message: z.string().openapi({
-    description: 'Error message',
-    example: StatusPhrases.NOT_FOUND,
-  }),
-});
 
 /**
  * Creates a validation error schema with realistic examples based on the input schema
@@ -139,6 +147,7 @@ export const validationErrorSchema = createValidationErrorSchema(
 // Export inferred types
 export type ApiError = z.infer<typeof apiErrorSchema>;
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;
+export type NotFoundResponse = z.infer<typeof notFoundSchema>;
 export type ValidationErrorDetails = z.infer<
   typeof validationErrorDetailsSchema
 >;

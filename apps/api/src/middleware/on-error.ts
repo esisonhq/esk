@@ -5,8 +5,8 @@ import { ZodError } from 'zod';
 
 import { env } from '@esk/utils/env';
 
-import { StatusCodes } from '@/lib/http/status-codes.js';
-import { StatusPhrases } from '@/lib/http/status-phrases';
+import { HttpStatusCodes } from '@/lib/http/status-codes.js';
+import { HttpStatusPhrases } from '@/lib/http/status-phrases';
 import { ErrorResponse } from '@/types/error';
 import { formatZodError } from '@/utils/format-zod-error';
 
@@ -57,9 +57,9 @@ const onError: ErrorHandler = (err, c) => {
   // Handle HTTPException Error
   if (err instanceof HTTPException) {
     const code =
-      'status' in err && err.status !== StatusCodes.OK
+      'status' in err && err.status !== HttpStatusCodes.OK
         ? (err.status as ContentfulStatusCode)
-        : StatusCodes.INTERNAL_SERVER_ERROR;
+        : HttpStatusCodes.INTERNAL_SERVER_ERROR;
 
     const message = isProduction
       ? 'An unexpected error occurred.'
@@ -85,24 +85,24 @@ const onError: ErrorHandler = (err, c) => {
   // Handle ZodError
   if (err instanceof ZodError) {
     const errorResponse = formatZodError(err, c, !isProduction);
-    return c.json(errorResponse, StatusCodes.UNPROCESSABLE_ENTITY);
+    return c.json(errorResponse, HttpStatusCodes.UNPROCESSABLE_ENTITY);
   }
 
   // Handle Other Errors
   return c.json(
     {
       success: false,
-      message: StatusPhrases.INTERNAL_SERVER_ERROR,
+      message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
       error: {
-        code: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: StatusPhrases.INTERNAL_SERVER_ERROR,
+        code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+        message: HttpStatusPhrases.INTERNAL_SERVER_ERROR,
         timestamp,
         requestId,
         path,
         ...(!isProduction && { stack: err.stack }),
       },
     } as ErrorResponse,
-    StatusCodes.INTERNAL_SERVER_ERROR,
+    HttpStatusCodes.INTERNAL_SERVER_ERROR,
   );
 };
 

@@ -1,6 +1,6 @@
 // Generated file. Do not edit
 // Codes retrieved on Mon, 11 Aug 2025 22:40:55 GMT from https://raw.githubusercontent.com/prettymuchbryce/http-status-codes/refs/heads/master/codes.json
-export const StatusCodes = {
+export const HttpStatusCodes = {
   /** Official Documentation @ https://tools.ietf.org/html/rfc7231#section-6.2.1
    *
    * This interim response indicates that everything so far is OK and that the client should continue with the request or ignore it if it is already finished. */

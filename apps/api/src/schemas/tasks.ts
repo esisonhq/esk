@@ -33,17 +33,6 @@ export const tasksSchema = z.array(taskSchema).openapi({
   description: 'An array of tasks objects',
 });
 
-export const getTaskSchema = z.object({
-  id: z.uuid().openapi({
-    param: {
-      in: 'path',
-      name: 'id',
-    },
-    description: 'The ID of the task to retrieve',
-    example: '480ea504-36fc-4722-8c5b-ce7a50dae606',
-  }),
-});
-
 export const insertTaskSchema = createTaskSchema
   .extend({
     name: z.string().min(1).max(500).openapi({
